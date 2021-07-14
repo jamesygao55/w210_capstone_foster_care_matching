@@ -60,6 +60,7 @@ elif mypage == 'Matcher':
 		child_everadpt = 'Select one'
 		current_case_goal = 'Select one'
 		find_providers_button = None
+		resetter = False
 
 		placed_before = st.selectbox("Has this child been placed before?", ['Select one', 'Yes', 'No'])
 
@@ -162,6 +163,9 @@ elif mypage == 'Matcher':
 			find_providers_button = st.button("Find Providers")
 
 		if find_providers_button:
+			resetter = True
+
+		if resetter == True:
 			st.write('Child Birthday:', child_birthday)
 			st.write('Child Race:', child_race)
 			st.write('Child Hispanic?:', child_hispanic)

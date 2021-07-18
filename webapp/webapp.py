@@ -2,15 +2,20 @@ import streamlit as st
 import pandas as pd
 import numpy as np
 import datetime
+import matplotlib.pyplot as plt
 import altair as alt
 from PIL import Image
 
+#---------------------------------#
+# Page layout
+## Page expands to full width
 st.set_page_config(layout="wide")
 
 ## another small change
 
 #### Creating pages for website
 st.sidebar.title('Foster Care Matcher')
+
 mypage = st.sidebar.radio('Pages', ['Home', 'Matcher', 'Matcher - Select Box', 'Matcher - Form Button', 'Architecture', 'Modeling', 'Team'])
 
 st.sidebar.title('')
@@ -34,7 +39,10 @@ if mypage == 'Home':
 	st.image(image, width = 800)
 	
 	st.title('Foster Care Matcher')
-	st.header('Description about Foster Care Matcher')
+	# st.header('Description about Foster Care Matcher')
+	st.markdown("""
+### This app provides a list of top quality matched providers to a prospect foster child with expected placement duration and probability of placement
+""")
 	st.write('Team **Foster Care Matching** or **CS: FB** (*A child saved, a future brightened*) is focused on improving the current foster care matching system which heavily relies on domain expertise and specific requests from foster parents that may hinder the potential of leveraging the insights from all the historic placement information of paired foster parents and children. This matching task could affect **200,000** children in Florida alone and **500,000** in US.  \n  \nUsing merged data sources from Adoption and Foster Care Analysis and Reporting (***AFCARS***) - annual case-level information of each child record in foster care system mandated by federal government; Florida Removal and Placement History (***FRPH***) - granular data of each child placement details with extra information on duration, date of start and end of placement; Demographics of Children including race, gender, date of birth, etc.  \n  \nWe have built a **Foster Care Matching Recommender System** by providing top **5** to **20** top-quality matched providers for each child entering the system using cutting-edge *factorization machines* that incorporates content-based, knowledge-based, collaborative filtering and contextual filtering with our customized match rating and model scoring configuration.  \n  \nTo complement our recommender system, we also created a **Placement Duration Model** and **Outcome Probability Model** that will predict how long the placement will last and what is the probability of a good placement outcome for our MVP to foster care placement specialists.  \n  \nWe intend to launch our application to foster care placement specialists by Aug 3rd.')
 
 
@@ -43,6 +51,7 @@ if mypage == 'Home':
 elif mypage == 'Matcher':
 	header = st.beta_container()
 	product = st.beta_container()
+	# graph = st.beta_columns()
 
 	with header:
 		# Creating the Titles and Image	

@@ -2,6 +2,10 @@ import streamlit as st
 import pandas as pd
 import numpy as np
 import datetime
+import altair as alt
+from PIL import Image
+
+st.set_page_config(layout="wide")
 
 ## another small change
 
@@ -25,9 +29,14 @@ st.sidebar.text('University of California, Berkeley')
 
 ### HOME PAGE ###
 if mypage == 'Home':
+	# image = Image.open('homepage_image.jpg').convert('RGB').save('fcare2.jpg')
+	image = Image.open('homepage_image.jpg')
+	st.image(image, width = 800)
+	
 	st.title('Foster Care Matcher')
 	st.header('Description about Foster Care Matcher')
-	st.write('Process on creating this')
+	st.write('Team **CS: FB** (*A child saved, a future brightened*) is focused on improving the current foster care matching system which heavily relies on domain expertise and specific requests from foster parents that may hinder the potential of leveraging the insights from all the historic placement information of paired foster parents and children. This matching task could affect **200,000** children in Florida alone and **500,000** in US.  \n  \nUsing merged data sources from Adoption and Foster Care Analysis and Reporting (***AFCARS***) - annual level case-level information of each child record in foster care system mandated by federal government; Florida Removal and Placement History (***FRPH***) - granular data of each child placement details with extra information on duration, date of start and end of placement; Demographics of Children including race, gender, date of birth, etc.  \n  \nWe have built a **foster care matching recommender system** by providing top **5** to **20** top-quality matched providers for each child entering the system using cutting-edge *factorization machines* that corporates content-based, knowledge-based, collaborative filtering and contextual filtering with our customized match rating and model scoring configuration.  \n  \nTo complement our recommender system, we also created a **Placement Duration model** and **Outcome Probability model** that will predict how lonwill last and what is probability of success for our MVP to foster care placement specialists.  \n  \nWe intend to use our MVP to contribute to peer and industry learning about factorization machines recommender system for foster care placement.  \n  \nOr we intend to launch our application to foster care placement specialists by Aug 3rd.')
+
 
 
 ### DEMO PAGE ###
@@ -39,7 +48,8 @@ elif mypage == 'Matcher':
 		# Creating the Titles and Image	
 		st.title("Foster Care Matcher")
 		st.header("Find the right foster care provider for your child")
-		st.write("Use all of the existing available data on previous placements to find the best Provider whose suited to care for the new foster child")
+		# st.write("To start, please answer foloowing questions.")
+		st.subheader("To start, please answer foloowing questions.")
 
 
 	with product:
@@ -700,14 +710,34 @@ elif mypage == 'Matcher - Form Button':
 				st.text('Showing distribution of placement end reasons')
 
 
-
-
-
 ### ARCHITECTURE PAGE ###
 elif mypage == 'Architecture':
-	st.title('Foster Care Matcher')
-	st.header('Features about Foster Care Matcher')
-	st.write('Process on creating this')
+	header = st.beta_container()
+	product = st.beta_container()
+
+	with header:
+		st.title('Foster Care Matcher')
+		st.header('Features about Foster Care Matcher')
+		st.subheader('this is data pipeline and ML pipeline')
+		image = Image.open('pipeline_mk2.png').convert('RGB').save('pipeline_mk_new.png')
+		image = Image.open('pipeline_mk_new.png')
+		st.image(image, width = 800)
+		# st.title('Foster Care Matcher')
+		# st.header('Features about Foster Care Matcher')
+		# st.subheader('this is data pipeline and ML pipeline')
+		# st.write('Process on creating this')
+
+
+	with product:
+		st.subheader('this is the past journey of this child through foster care system ')
+		df = pd. DataFrame(
+		np.random.randn(200, 3),
+		columns=['a', 'b', 'c'])
+
+		c = alt.Chart(df).mark_circle().encode(
+			x='a', y='b', size='c', color='c', tooltip=['a', 'b', 'c'])
+	
+		st.write(c)
 
 ### MODELING PAGE ###
 elif mypage == 'Modeling':
@@ -715,6 +745,7 @@ elif mypage == 'Modeling':
 	st.header('Features about Foster Care Matcher')
 	st.write('Process on creating this')
 
+	
 ### TEAM PAGE ###
 elif mypage == 'Team':
 	st.title('Foster Care Matcher')
@@ -723,6 +754,8 @@ elif mypage == 'Team':
 	st.title("We'd like to thank")
 	st.header('Orgs')
 	st.write('Robert and Roshannon, David and Joyce')	
+
+
 
 
 ### TEST PAGE ###

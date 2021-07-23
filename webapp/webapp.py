@@ -17,7 +17,7 @@ st.set_page_config(layout="wide")
 #### Creating pages for website
 st.sidebar.title('Foster Care Matcher')
 
-mypage = st.sidebar.radio('Pages', ['Home', 'Matcher', 'Matcher - Select Box', 'Matcher - Form Button', 'Architecture', 'Modeling', 'Team'])
+mypage = st.sidebar.radio('Pages', ['Home', 'Journey', 'Matcher', 'Matcher - Select Box', 'Matcher - Form Button', 'Architecture', 'Modeling', 'Team'])
 
 st.sidebar.title('')
 st.sidebar.title('')
@@ -46,34 +46,100 @@ if mypage == 'Home':
 """)
 	st.write('Team **Foster Care Matching** or **CS: FB** (*A child saved, a future brightened*) or **Forever Foster** or **Foster Forever(F2)** *Love.Heal.Trust.Respect.Cherish* is focused on improving the current foster care matching system which heavily relies on domain expertise and specific requests from foster parents that may hinder the potential of leveraging the insights from all the historic placement information of paired foster parents and children. This matching task could affect **200,000** children in Florida alone and **500,000** in US.  \n  \nUsing merged data sources from Adoption and Foster Care Analysis and Reporting (***AFCARS***) - annual case-level information of each child record in foster care system mandated by federal government; Florida Removal and Placement History (***FRPH***) - granular data of each child placement details with extra information on duration, date of start and end of placement; Demographics of Children including race, gender, date of birth, etc.  \n  \nWe have built a **Foster Care Matching Recommender System** by providing top **5** to **20** top-quality matched providers for each child entering the system using cutting-edge *factorization machines* that incorporates content-based, knowledge-based, collaborative filtering and contextual filtering with our customized match rating and model scoring configuration.  \n  \nTo complement our recommender system, we also created a **Placement Duration Model** and **Outcome Probability Model** that will predict how long the placement will last and what is the probability of a good placement outcome for our MVP to foster care placement specialists.  \n  \nWe intend to launch our application to foster care placement specialists by Aug 3rd.')
 
-
-
-### DEMO PAGE ###
-elif mypage == 'Matcher':
-	#---------------------------------#
-	# Page layout (continued)
-	## Divide page to 2 columns (col1 = questions' list, col2  = graph contents)
-	# col1 = st.sidebar
-	# col1, col2 = st.beta_columns((1,1))
-	# col1.header = st.beta_container()
+### JOURNEY PAGE ###
+elif mypage == 'Journey':
 	header = st.beta_container()
-	# col1.subheader = st.beta_container()
-	product = st.beta_container()  
-	# col1.product = st.beta_container()
-	# add column for graphs	
-	# graph = st.beta_columns()
-	# col2.header = st.beta_container()
-	# col2.graph = st.beta_container()
+	product = st.beta_container()
 
-	# with col1.header:
 	with header:
 		# Creating the Titles and Image	
-		st.title("Foster Care Matcher")
+		st.title("My Journey with Foster Care")
 		st.header("Find the right foster care provider for your child")
 		# st.write("To start, please answer foloowing questions.")
 		st.subheader("To start, please answer foloowing questions.")
 
-    # with col1.product:
+	with product:	
+		## initialize values
+		placed_before = 'Select one'
+		child_ID = 'Select one'
+
+		#load data
+		df = pd.read_csv('high_placement_children.csv')
+		def dataload(df, pl_no = num_prev_placements):
+			cid = df[df.PLACEMENT_NUM==pl_no]['AFCARS_ID'].unique()[0]
+			source = df[df.AFCARS_ID==cid]
+			return source
+
+		def plot_multi(source):
+			# import geopandas as gpd
+			gdf = gpd.read_file('https://raw.githubusercontent.com/python-visualization/folium/master/tests/us-states.json', driver='GeoJSON')
+			gdf = gdf[gdf.id=='FL']
+			base = alt.Chart(gdf).mark_geoshape(
+			stroke='gray', 
+			fill='lightgrey')					
+			points = alt.Chart(source).mark_circle().encode(
+			longitude='longitude:Q',
+			latitude='latitude:Q',
+			color = 'zip:N',
+			size='PLACEMENT_LENGTH',
+			# title='placement locaton in Florida',
+			tooltip=['zip', 'PLACEMENT_LENGTH']
+			).properties(
+				title='placement location')
+			g_plot = base + points
+			# st.write(g_plot)
+
+			pl_number_line = alt.Chart(source).mark_line().encode(
+			x='PLACEMENT_BEGIN_DATE:T',
+			y= 'PLACEMENT_NUM:Q',
+			tooltip=['PLACEMENT_BEGIN_DATE', 'PLACEMENT_NUM']
+			).properties(
+				title='placement journey'
+			)
+		
+			pl_bar = alt.Chart(source).mark_bar().encode(
+			x='PLACEMENT_NUM',
+			y='PLACEMENT_LENGTH:Q',
+			# title='placement locaton in Florida',
+			tooltip=['PLACEMENT_NUM', 'PLACEMENT_LENGTH']
+			).properties(
+				title='placement duration')
+			
+			pl_duration_mark = alt.Chart(source).mark_circle().encode(
+			x='PLACEMENT_NUM:Q',
+			y= 'PLACEMENT_LENGTH:Q',
+			size='PLACEMENT_LENGTH',
+			tooltip=['PLACEMENT_BEGIN_DATE', 'PLACEMENT_LENGTH']
+			).properties(
+				title='placement duration')
+
+			plot_group1 = alt.hconcat(pl_duration_mark, points) #, g_plot
+			plot_group2 = alt.hconcat(pl_bar, points)
+    
+			return plot_group1, plot_group2
+
+		placed_before = st.selectbox("Has this child been placed before?", ['Select one', 'Yes', 'No'])
+
+		if placed_before == 'Yes':
+			num_prev_placements = st.number_input('How many previous placements has this child had?', min_value = 0, max_value = 100, step = 1)
+
+		if (num_prev_placements > 0) & (num_prev_placements == 50):
+			# if num_prev_placements == 50:
+			# st.markdown("""this is the journey of a child""")
+			st.subheader('this is the past journey of this child going through foster care system at least ' +str(num_prev_placements)+ ' times!')
+
+
+### DEMO PAGE ###
+elif mypage == 'Matcher':
+	header = st.beta_container()
+	product = st.beta_container()  
+
+	with header:
+		# Creating the Titles and Image	
+		st.title("Foster Care Matcher")
+		st.header("Find the right foster care provider for your child")
+		st.subheader("To start, please answer foloowing questions.")
+
 	with product:	
 		## initialize values
 		placed_before = 'Select one'
@@ -137,15 +203,15 @@ elif mypage == 'Matcher':
 				title='placement duration')
 			
 			pl_duration_mark = alt.Chart(source).mark_circle().encode(
-			x='PLACEMENT_BEGIN_DATE:T',
+			x='PLACEMENT_NUM:Q',
 			y= 'PLACEMENT_LENGTH:Q',
 			size='PLACEMENT_LENGTH',
 			tooltip=['PLACEMENT_BEGIN_DATE', 'PLACEMENT_LENGTH']
 			).properties(
 				title='placement duration')
 
-			plot_group1 = alt.hconcat(pl_number_line, pl_duration_mark, points) #, g_plot
-			plot_group2 = alt.hconcat(pl_number_line, pl_bar, points)
+			plot_group1 = alt.hconcat(pl_duration_mark, points) #, g_plot
+			plot_group2 = alt.hconcat(pl_bar, points)
     
 			return plot_group1, plot_group2
 

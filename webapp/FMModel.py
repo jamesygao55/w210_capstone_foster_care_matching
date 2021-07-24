@@ -92,7 +92,7 @@ def get_lookups(agelookupdf, racelookupdf, disabilitylookupdf, placementlookupdf
 
 #2. get recommendations
 @st.cache
-def get_recommendations(modelinfer, device, providers, provider_biases, provider_embeddings, childid = 0,raceid = 291545, ageid = 291542, disability = 291551, placement = 29155, gender = 291556, topN = 20):
+def get_recommendations(modelinfer, device, providers, provider_biases, provider_embeddings, childid = 0,raceid = 167737, ageid = 167734, disability = 167743, placement = 167746, gender = 167748, topN = 20):
     child_embedding = modelinfer.embeddings(torch.tensor(childid,device=device))
     race_embedding = modelinfer.embeddings(torch.tensor(raceid,device=device)) 
     age_embedding = modelinfer.embeddings(torch.tensor(ageid,device=device))

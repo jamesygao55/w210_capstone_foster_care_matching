@@ -142,7 +142,7 @@ def get_probability_distribution(record, model_clf):
     y_pred_probs = model_clf.predict_proba(record)
     y_pred_probs_df = pd.DataFrame(y_pred_probs)
     y_pred_probs_df.columns = model_clf.classes_
-
+    print(y_pred_probs_df.columns)
     GOOD_OUTCOMES = ['Reunification w/Parent(s) including Non-',
               'Adoption Finalization',
               'Permanent Guardianship (Includes Guardia',
@@ -165,38 +165,52 @@ def get_probability_distribution(record, model_clf):
     TEMP_DF = y_pred_probs_df[GOOD_OUTCOMES_TEST_DF]
     y_pred_probs_df['Probability of a Good Outcome'] = TEMP_DF.sum(axis=1)
 
-    add_list = ['Permanent Guardianship'
+    add_list = ['Reunification'
+            ,'Placement with a Relative'
+            ,'Adoption'
+            ,'Permanent Guardianship'
+            ,'Home Visit'
             ,'Child Ages Out'
-            ,'Runaway'
-            ,'Reunification'
-            ,'Other'
+            ,'Other Permanent Arrangement'
+            ,'Administrative Disruption'
             ,'Change Requested'
-            ,'Change in EFC Supervised IL Arrangement'
-            ,'Correctional Facility with Aftercare'
-            ,'Entering EFC Supervised IL Arrangement'
-            ,'Move Made in Accordance with Case Plan Goal'
-            ,'Placement with a fit and willing Relative'
-            ,'Transfer to Other Agency'
-            ,'Trial Home Visit from Court-Order'
-            ,'Another Planned Permanent Living Arrangement'
-            ,'Voluntary Opt Out'
+            ,'Runaway'
+            # ,'Change in EFC Supervised IL Arrangement'
+            # ,'Correctional Facility with Aftercare'
+            # ,'Entering EFC Supervised IL Arrangement'
+            # ,'Move Made in Accordance with Case Plan Goal'
+            # ,'Transfer to Other Agency'
+            ,'Hospitalization'
+            ,'Incarceration/Detention'
+            ,'Overcapacity'
+            ,'Provider No Longer Licensed'
+            ,'Other Placement Disruption'
+            ,'Other'
+            # ,'Voluntary Opt Out'
                 ]
     drop_list = [
-                ['Permanent Guardianship (Includes Guardia','Permanent Guardianship to Successor Guar']
-                ,['Child ages out (18 - 23 Years Old)','Child Ages Out Non-EFC','Young Adult Ages Out (EFC only)']
-                ,['Runaway - Closing Case','Runaway - NOT Closing Case']
-                ,['Reunification w/Parent(s) including Non-','Reunited with Removal Home Caregiver-Not']
-                ,['Duplicate','Duplicate Provider Clean-up','Birthday Batch','Other']
-                ,['Provider Requested Change','Child Requested Change','Parent/Relative/Guardian Requested Chang']
-                ,['Change in EFC Supervised IL Arrangement/']
-                ,['Child in Correctional Facility W/Afterca']
-                ,['Entering EFC Supervised IL Arrangement/P']
-                ,['Move Made in Accordance with Case Plan G']
+                ['Reunification w/Parent(s) including Non-','Reunited with Removal Home Caregiver-Not']
                 ,['Placement with a fit and willing Relativ']
-                ,['Transfer to Other Agency (i.e. Out of Co']
+                ,['Adoption Finalization', 'Adoption Placement']
+                ,['Permanent Guardianship (Includes Guardia','Permanent Guardianship to Successor Guar']
                 ,['Trial Home Visit from Court-Ordered Plcm']
+                ,['Child ages out (18 - 23 Years Old)','Child Ages Out Non-EFC','Young Adult Ages Out (EFC only)','Voluntary Opt Out (EFC only)','No Longer EFC Eligible', 'Emancipation', 'Entered Military Service', 'Marriage']
                 ,['APPLA (Another Planned Permanent Living ']
-                ,['Voluntary Opt Out (EFC only)']
+                ,['Entering EFC Supervised IL Arrangement/P', 'Change in EFC Supervised IL Arrangement/','Move Made in Accordance with Case Plan G','Transfer to Other Agency (i.e. Out of Co','Dismissed by Court', 'Adoption Disruption']
+                ,['Provider Requested Change','Child Requested Change','Parent/Relative/Guardian Requested Chang']
+                ,['Runaway - Closing Case','Runaway - NOT Closing Case', 'Absconded', 'Abducted']
+                # ,['Change in EFC Supervised IL Arrangement/']
+                # ,['Child in Correctional Facility W/Afterca']
+                # ,['Entering EFC Supervised IL Arrangement/P']
+                # ,['Move Made in Accordance with Case Plan G']
+                # ,['Transfer to Other Agency (i.e. Out of Co']
+                ,['Hospitalization (more than 30 days)', 'Death of Child']
+                ,['Placement Disruption']
+                ,['Incarceration/Detention', 'Child in Correctional Facility W/Afterca']
+                ,['Placement Overcapacity']
+                ,['Provider No Longer Licensed']
+                ,['Duplicate','Duplicate Provider Clean-up','Birthday Batch','Other']
+                # ,['Voluntary Opt Out (EFC only)']
                 ]
 
 
@@ -205,14 +219,16 @@ def get_probability_distribution(record, model_clf):
         y_pred_probs_df.drop(columns=drop_list[i],inplace=True)
 
     GOOD_OUTCOMES_V2 = ['Reunification',
-                'Adoption Finalization',
+                'Adoption',
                 'Permanent Guardianship',
-                'Placement with a fit and willing Relative',
+                'Placement with a Relative',
                 'Child Ages Out',
-                'Adoption Placement',
-                'Another Planned Permanent Living Arrangement',
-                'Voluntary Opt Out',
-                'Entered Military Service']
+                'Other Permanent Arrangement',
+                'Home Visit'
+                # 'Voluntary Opt Out',
+                # 'Entered Military Service'
+                ]
+    NEUTRAL_OUTCOMES_V2 = ['Administrative Disruption']
 
     plt.rc('font', size=12)
 
@@ -231,23 +247,49 @@ def get_probability_distribution(record, model_clf):
         if cols[i] in GOOD_OUTCOMES_V2:
             good_cols.append(cols[i])
 
+    neutral_cols = []
+    for i in range(len(cols)):
+        if cols[i] in NEUTRAL_OUTCOMES_V2:
+            neutral_cols.append(cols[i])
+
     not_good_cols = []
     for i in range(len(cols)):
-        if cols[i] not in good_cols:
+        if cols[i] not in good_cols and cols[i] not in neutral_cols:
             not_good_cols.append(cols[i])
 
     df_good = y_pred_probs_df[good_cols].copy()
+    df_neutral = y_pred_probs_df[neutral_cols].copy()
     df_not_good = y_pred_probs_df[not_good_cols].copy()
     df_not_good.drop(columns='Probability of a Good Outcome', inplace=True)
 
-    ax1.bar(df_good.columns, df_good.iloc[0])
-    ax1.bar(df_not_good.columns, df_not_good.iloc[0])
+    ax1.barh(df_good.columns, df_good.iloc[0], color = '#1a9988ff')
+    ax1.barh(df_neutral.columns, df_neutral.iloc[0], color = '#808080')
+    ax1.barh(df_not_good.columns, df_not_good.iloc[0], color = '#eb5600')
 
-    ax1.set_xlabel('Placement Outcomes', fontsize=14)
-    ax1.set_xticklabels(list(df_good.columns)+list(df_not_good.columns), rotation=45, ha='right')
-    ax1.set_ylabel('Probability', fontsize=14)
-    ax1.yaxis.set_major_formatter(mtick.PercentFormatter(xmax=1))
-    ax1.yaxis.set_major_formatter(FormatStrFormatter('%.2f'))
+    ax1.invert_yaxis()
+    ax1.set_ylabel('Placement Outcomes', fontsize = 14)
+    ax1.set_xlabel('Probability', fontsize = 14)
+    ax1.set_title('Outcome Probability Breakdown', fontsize = 20)
+
+    # ax1.barh(df_good.iloc[0], df_good.columns, color = '#1a9988ff')
+    # ax1.barh(df_neutral.iloc[0], df_neutral.columns, color = '#595959')
+    # ax1.barh(df_not_good.iloc[0], df_not_good.columns, color = '#eb5600')
+
+    # ax1.set_xlabel('Placement Outcomes', fontsize=14)
+    # ax1.set_yticklabels(list(df_good.columns)+list(df_not_good.columns), rotation=45, ha='right')
+    # ax1.set_ylabel('Probability', fontsize=14)
+    # ax1.yaxis.set_major_formatter(mtick.PercentFormatter(xmax=1))
+    # ax1.yaxis.set_major_formatter(FormatStrFormatter('%.2f'))
+
+
+
+
+        # ax.barh(y_pos, performance, xerr=error, align='center')
+        # ax.set_yticks(y_pos)
+        # ax.set_yticklabels(people)
+        # ax.invert_yaxis()  # labels read top-to-bottom
+        # ax.set_xlabel('Performance')
+        # ax.set_title('How fast do you want to go today?')
 
 
     # plt.show()

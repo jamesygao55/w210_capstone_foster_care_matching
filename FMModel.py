@@ -151,7 +151,7 @@ def load_model(lenmodel, lenfeatures, device):
 
 
 #load providers
-@st.cache
+@st.cache(allow_output_mutation=True)
 def load_providers(ratingsdf, modelinfer, device):
     providers = ratingsdf.drop_duplicates('PROVIDER_INDEX').copy()
     provider_embeddings = modelinfer.embeddings(torch.tensor(providers['PROVIDER_INDEX'].values,device=device).long())

@@ -14,17 +14,16 @@ import torch.nn.functional as F
 import FMModel as FMModel
 import DurationModel as DurationModel
 
-# import streamlit as st
-# import pandas as pd
-# import numpy as np
-# import datetime as dt
-# import pickle
-# from xgboost import XGBClassifier, XGBRegressor
+from altair.vegalite.v4.schema.channels import X
+import altair as alt
+import geopandas as gpd
+from PIL import Image
+
 
 
 #### Creating pages for website
 st.sidebar.title('Foster Care Matcher')
-mypage = st.sidebar.radio('Pages', ['Home', 'Matcher', 'Architecture', 'Modeling', 'Team'])
+mypage = st.sidebar.radio('Pages', ['Home', 'Matcher', 'Journey', 'Architecture', 'Modeling', 'Team'])
 
 st.sidebar.title('')
 st.sidebar.title('')
@@ -42,9 +41,14 @@ st.sidebar.text('University of California, Berkeley')
 
 ### HOME PAGE ###
 if mypage == 'Home':
+	image = Image.open('homepage_image.jpg')
+	st.image(image, width = 800)
+	
 	st.title('Foster Care Matcher')
-	st.header('Description about Foster Care Matcher')
-	st.write('Process on creating this')
+	st.markdown("""
+	### This app provides a list of top quality matched providers to a prospect foster child with expected placement duration and probability of placement""")
+	st.write('Team **Foster Care Matching** or **CS: FB** (*A child saved, a future brightened*) or **Forever Foster** or **Foster Forever(F2)** *Love.Heal.Trust.Respect.Cherish* is focused on improving the current foster care matching system which heavily relies on domain expertise and specific requests from foster parents that may hinder the potential of leveraging the insights from all the historic placement information of paired foster parents and children. This matching task could affect **200,000** children in Florida alone and **500,000** in US.  \n  \nUsing merged data sources from Adoption and Foster Care Analysis and Reporting (***AFCARS***) - annual case-level information of each child record in foster care system mandated by federal government; Florida Removal and Placement History (***FRPH***) - granular data of each child placement details with extra information on duration, date of start and end of placement; Demographics of Children including race, gender, date of birth, etc.  \n  \nWe have built a **Foster Care Matching Recommender System** by providing top **5** to **20** top-quality matched providers for each child entering the system using cutting-edge *factorization machines* that incorporates content-based, knowledge-based, collaborative filtering and contextual filtering with our customized match rating and model scoring configuration.  \n  \nTo complement our recommender system, we also created a **Placement Duration Model** and **Outcome Probability Model** that will predict how long the placement will last and what is the probability of a good placement outcome for our MVP to foster care placement specialists.  \n  \nWe intend to launch our application to foster care placement specialists by Aug 3rd.')
+
 
 
 ### DEMO PAGE ###
@@ -343,8 +347,12 @@ elif mypage == 'Matcher':
 
 
 			### FORMAT OUTPUT ###
-			st.write(recommended_providers)
-			st.write(duration_prediction)
+			# st.write(recommended_providers)
+			# st.write(duration_prediction)
+			st.text('')
+			st.text('')
+			st.text('')
+			st.text('')
 			st.title('Top Matched Providers')
 			button_dict = {}
 			for index, row in final_providers.iterrows():
@@ -362,6 +370,99 @@ elif mypage == 'Matcher':
 				st.text('')
 
 
+### JOURNEY PAGE ###
+elif mypage == 'Journey':
+	header = st.beta_container()
+	product = st.beta_container()
+
+	with header:
+		# Creating the Titles and Image	
+		st.header("My Journey with Foster Care")
+		st.subheader("Please select the Child ID")
+
+	with product:	
+		## initialize values
+		# placed_before = 'Select one'
+		child_ID = 'Select one'
+
+		#load data
+		
+		df = pd.read_csv('child_demo.csv')
+		@st.cache
+		def dataload(df, cid = child_ID):
+			source = df[df.AFCARS_ID==cid]
+			source['zip'] = source['zip'].astype('str')
+			source['PLACEMENT_BEGIN_DATE'] = source['PLACEMENT_BEGIN_DATE'].apply(lambda x: pd.to_datetime(x, format='%Y-%m-%d'))
+			source['PLACEMENT_END_DATE'] = source['PLACEMENT_END_DATE'].apply(lambda x: pd.to_datetime(x, format='%Y-%m-%d'))
+			source['REMOVAL_DATE'] = source['REMOVAL_DATE'].apply(lambda x: pd.to_datetime(x, format='%Y-%m-%d'))
+    		
+			return source
+			
+		def plot_multi(source):
+			# import geopandas as gpd
+			gdf = gpd.read_file('https://raw.githubusercontent.com/python-visualization/folium/master/tests/us-states.json', driver='GeoJSON')
+			gdf = gdf[gdf.id=='FL']
+			base = alt.Chart(gdf).mark_geoshape(
+			stroke='gray', 
+			fill='lightgrey')	
+
+			points = alt.Chart(source).mark_circle().encode(
+			longitude='longitude:Q',
+			latitude='latitude:Q',
+			color = 'zip:N',
+			size='PLACEMENT_LENGTH',
+			# title='placement locaton in Florida',
+			tooltip=['zip', 'PLACEMENT_LENGTH']
+			).properties(title='placement location')
+
+			# g_plot = base + points
+			# st.write(g_plot)
+
+			pl_num_mark = alt.Chart(source).mark_circle().encode(
+			x='PLACEMENT_NUM',
+			y='PLACEMENT_LENGTH:Q',
+			size='PLACEMENT_LENGTH',
+			color = 'zip',
+			tooltip=['PLACEMENT_NUM', 'PLACEMENT_LENGTH']
+			).properties(title='placement length vs number').interactive()
+			
+			pl_duration_mark = alt.Chart(source).mark_circle().encode(
+			# x='PLACEMENT_NUM:Q',
+			x='PLACEMENT_BEGIN_DATE:T',
+			y= 'PLACEMENT_LENGTH:Q',
+			size='PLACEMENT_LENGTH',
+			tooltip=['PLACEMENT_BEGIN_DATE', 'PLACEMENT_LENGTH']
+			).properties(
+				title='placement duration').interactive()
+
+			# plot_group1 = alt.hconcat(pl_duration_mark, pl_num_mark, points)
+			plot_group1 = alt.hconcat(pl_duration_mark, pl_num_mark) 
+    
+			return plot_group1
+
+		# placed_before = st.selectbox("Has this child been placed before?", ['Select one', 'Yes', 'No'])
+
+		# if placed_before == 'Yes':
+		child_ID = st.selectbox('Child ID is a unique idenfier of each child in foster care system', 
+		[80000001,451000749,1811000629,8291010319,261405401,81010219,251010479,1010299,31010759])
+
+	
+		# if num_prev_placements == 50:
+		# st.markdown("""this is the journey of a child""")
+		# st.subheader('this is the past journey of this child going through foster care system at least ' +str(num_prev_placements)+ ' times!')
+		source = dataload(df, cid = child_ID)
+		pl_num = source.shape[0]
+		pl_start = source['PLACEMENT_BEGIN_DATE'].min()
+		pl_yrs =str(source['PLACEMENT_END_DATE'].max().year - source['PLACEMENT_BEGIN_DATE'].min().year)
+
+		st.write('this child has experienced ' + str(pl_num) + ' placements within ' + str(pl_yrs) + ' years with mixed experience.')
+		# st.write(source.head(2))
+		
+		df_map = source[['PLACEMENT_LENGTH','latitude', 'longitude']]
+		st.map(df_map)	
+
+		plot_group1 = plot_multi(source)
+		st.write(plot_group1)
 
 
 

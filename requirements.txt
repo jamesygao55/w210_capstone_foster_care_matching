@@ -4,7 +4,7 @@ torch==1.9.0+cpu
 torchvision==0.9.1+cpu
 streamlit==0.84.2
 numpy==1.18.1
-pandas==1.0.0
+pandas==1.2.5
 psutil==5.6.3
 python-dateutil==2.8.1
 pickleshare==0.7.5

@@ -1,3 +1,4 @@
+from altair.vegalite.v4.schema.channels import X
 import streamlit as st
 import pandas as pd
 import numpy as np
@@ -53,30 +54,35 @@ elif mypage == 'Journey':
 
 	with header:
 		# Creating the Titles and Image	
-		st.title("My Journey with Foster Care")
-		st.header("Find the right foster care provider for your child")
-		# st.write("To start, please answer foloowing questions.")
-		st.subheader("To start, please answer foloowing questions.")
+		st.header("My Journey with Foster Care")
+		st.subheader("Please select the Child ID")
 
 	with product:	
 		## initialize values
-		placed_before = 'Select one'
+		# placed_before = 'Select one'
 		child_ID = 'Select one'
 
 		#load data
-		df = pd.read_csv('high_placement_children.csv')
-		def dataload(df, pl_no = num_prev_placements):
-			cid = df[df.PLACEMENT_NUM==pl_no]['AFCARS_ID'].unique()[0]
+		
+		df = pd.read_csv('child_demo.csv')
+		@st.cache
+		def dataload(df, cid = child_ID):
 			source = df[df.AFCARS_ID==cid]
+			source['zip'] = source['zip'].astype('str')
+			source['PLACEMENT_BEGIN_DATE'] = source['PLACEMENT_BEGIN_DATE'].apply(lambda x: pd.to_datetime(x, format='%Y-%m-%d'))
+			source['PLACEMENT_END_DATE'] = source['PLACEMENT_END_DATE'].apply(lambda x: pd.to_datetime(x, format='%Y-%m-%d'))
+			source['REMOVAL_DATE'] = source['REMOVAL_DATE'].apply(lambda x: pd.to_datetime(x, format='%Y-%m-%d'))
+    		
 			return source
-
+			
 		def plot_multi(source):
 			# import geopandas as gpd
 			gdf = gpd.read_file('https://raw.githubusercontent.com/python-visualization/folium/master/tests/us-states.json', driver='GeoJSON')
 			gdf = gdf[gdf.id=='FL']
 			base = alt.Chart(gdf).mark_geoshape(
 			stroke='gray', 
-			fill='lightgrey')					
+			fill='lightgrey')	
+
 			points = alt.Chart(source).mark_circle().encode(
 			longitude='longitude:Q',
 			latitude='latitude:Q',
@@ -84,50 +90,64 @@ elif mypage == 'Journey':
 			size='PLACEMENT_LENGTH',
 			# title='placement locaton in Florida',
 			tooltip=['zip', 'PLACEMENT_LENGTH']
-			).properties(
-				title='placement location')
-			g_plot = base + points
+			).properties(title='placement location')
+
+			# g_plot = base + points
 			# st.write(g_plot)
 
-			pl_number_line = alt.Chart(source).mark_line().encode(
-			x='PLACEMENT_BEGIN_DATE:T',
-			y= 'PLACEMENT_NUM:Q',
-			tooltip=['PLACEMENT_BEGIN_DATE', 'PLACEMENT_NUM']
-			).properties(
-				title='placement journey'
-			)
-		
-			pl_bar = alt.Chart(source).mark_bar().encode(
+			pl_num_mark = alt.Chart(source).mark_circle().encode(
 			x='PLACEMENT_NUM',
 			y='PLACEMENT_LENGTH:Q',
-			# title='placement locaton in Florida',
+			size='PLACEMENT_LENGTH',
+			color = 'zip',
 			tooltip=['PLACEMENT_NUM', 'PLACEMENT_LENGTH']
-			).properties(
-				title='placement duration')
+			).properties(title='placement length vs number').interactive()
 			
 			pl_duration_mark = alt.Chart(source).mark_circle().encode(
-			x='PLACEMENT_NUM:Q',
+			# x='PLACEMENT_NUM:Q',
+			x='PLACEMENT_BEGIN_DATE:T',
 			y= 'PLACEMENT_LENGTH:Q',
 			size='PLACEMENT_LENGTH',
 			tooltip=['PLACEMENT_BEGIN_DATE', 'PLACEMENT_LENGTH']
 			).properties(
-				title='placement duration')
+				title='placement duration').interactive()
 
-			plot_group1 = alt.hconcat(pl_duration_mark, points) #, g_plot
-			plot_group2 = alt.hconcat(pl_bar, points)
+			# plot_group1 = alt.hconcat(pl_duration_mark, pl_num_mark, points)
+			plot_group1 = alt.hconcat(pl_duration_mark, pl_num_mark) 
     
-			return plot_group1, plot_group2
+			return plot_group1
 
-		placed_before = st.selectbox("Has this child been placed before?", ['Select one', 'Yes', 'No'])
+		# placed_before = st.selectbox("Has this child been placed before?", ['Select one', 'Yes', 'No'])
 
-		if placed_before == 'Yes':
-			num_prev_placements = st.number_input('How many previous placements has this child had?', min_value = 0, max_value = 100, step = 1)
+		# if placed_before == 'Yes':
+		child_ID = st.selectbox('Child ID is a unique idenfier of each child in foster care system', 
+		[80000001,451000749,1811000629,8291010319,261405401,81010219,251010479,1010299,31010759])
 
-		if (num_prev_placements > 0) & (num_prev_placements == 50):
-			# if num_prev_placements == 50:
-			# st.markdown("""this is the journey of a child""")
-			st.subheader('this is the past journey of this child going through foster care system at least ' +str(num_prev_placements)+ ' times!')
+	
+		# if num_prev_placements == 50:
+		# st.markdown("""this is the journey of a child""")
+		# st.subheader('this is the past journey of this child going through foster care system at least ' +str(num_prev_placements)+ ' times!')
+		source = dataload(df, cid = child_ID)
+		pl_num = source.shape[0]
+		pl_start = source['PLACEMENT_BEGIN_DATE'].min()
+		pl_yrs =str(source['PLACEMENT_END_DATE'].max().year - source['PLACEMENT_BEGIN_DATE'].min().year)
 
+		st.write('this child has experienced ' + str(pl_num) + ' placements within ' + str(pl_yrs) + ' years with mixed experience.')
+		# st.write(source.head(2))
+		
+		df_map = source[['PLACEMENT_LENGTH','latitude', 'longitude']]
+		st.map(df_map)	
+
+		plot_group1 = plot_multi(source)
+		st.write(plot_group1)
+
+		# test map
+		# df = pd.DataFrame(np.random.randn(1000, 2) / [50, 50] + [37.76, -122.4], columns=['lat', 'lon'])
+		# st.map(df)
+
+		# child data
+		# df_map = source[['latitude', 'longitude']]
+		# st.map(df_map)	
 
 ### DEMO PAGE ###
 elif mypage == 'Matcher':
@@ -160,98 +180,12 @@ elif mypage == 'Matcher':
 		find_providers_button = None
 		resetter = False
 
-		#load data
-		df = pd.read_csv('high_placement_children.csv')
-		def dataload(df, pl_no = num_prev_placements):
-			cid = df[df.PLACEMENT_NUM==pl_no]['AFCARS_ID'].unique()[0]
-			source = df[df.AFCARS_ID==cid]
-			return source
-
-		def plot_multi(source):
-			# import geopandas as gpd
-			gdf = gpd.read_file('https://raw.githubusercontent.com/python-visualization/folium/master/tests/us-states.json', driver='GeoJSON')
-			gdf = gdf[gdf.id=='FL']
-			base = alt.Chart(gdf).mark_geoshape(
-			stroke='gray', 
-			fill='lightgrey')					
-			points = alt.Chart(source).mark_circle().encode(
-			longitude='longitude:Q',
-			latitude='latitude:Q',
-			color = 'zip:N',
-			size='PLACEMENT_LENGTH',
-			# title='placement locaton in Florida',
-			tooltip=['zip', 'PLACEMENT_LENGTH']
-			).properties(
-				title='placement location')
-			g_plot = base + points
-			# st.write(g_plot)
-
-			pl_number_line = alt.Chart(source).mark_line().encode(
-			x='PLACEMENT_BEGIN_DATE:T',
-			y= 'PLACEMENT_NUM:Q',
-			tooltip=['PLACEMENT_BEGIN_DATE', 'PLACEMENT_NUM']
-			).properties(
-				title='placement journey'
-			)
-		
-			pl_bar = alt.Chart(source).mark_bar().encode(
-			x='PLACEMENT_NUM',
-			y='PLACEMENT_LENGTH:Q',
-			# title='placement locaton in Florida',
-			tooltip=['PLACEMENT_NUM', 'PLACEMENT_LENGTH']
-			).properties(
-				title='placement duration')
-			
-			pl_duration_mark = alt.Chart(source).mark_circle().encode(
-			x='PLACEMENT_NUM:Q',
-			y= 'PLACEMENT_LENGTH:Q',
-			size='PLACEMENT_LENGTH',
-			tooltip=['PLACEMENT_BEGIN_DATE', 'PLACEMENT_LENGTH']
-			).properties(
-				title='placement duration')
-
-			plot_group1 = alt.hconcat(pl_duration_mark, points) #, g_plot
-			plot_group2 = alt.hconcat(pl_bar, points)
-    
-			return plot_group1, plot_group2
-
 		placed_before = st.selectbox("Has this child been placed before?", ['Select one', 'Yes', 'No'])
 
 		if placed_before == 'Yes':
 			num_prev_placements = st.number_input('How many previous placements has this child had?', min_value = 0, max_value = 100, step = 1)
 
-		if (num_prev_placements > 0) & (num_prev_placements == 50):
-			# if num_prev_placements == 50:
-			# st.markdown("""this is the journey of a child""")
-			st.subheader('this is the past journey of this child going through foster care system at least ' +str(num_prev_placements)+ ' times!')
-
-			# df = pd.read_csv('high_placement_children.csv')
-			# def dataload(df, pl_no = num_prev_placements):
-			# 	cid = df[df.PLACEMENT_NUM==pl_no]['AFCARS_ID'].unique()[0]
-			# 	source = df[df.AFCARS_ID==cid]
-			# 	return source
-			source = dataload(df, pl_no = num_prev_placements)
-			pl_num = source['PLACEMENT_NUM'].max()
-			pl_start = source['PLACEMENT_BEGIN_DATE'].min()
-			# pl_yrs = str(source['PLACEMENT_END_DATE'].year.max() - source['PLACEMENT_BEGIN_DATE'].year.min())
-			# st.write('this child has experienced ' + str(pl_num) + ' placements in ' + str(pl_yrs) + ' years since ' + str(pl_start))
-			st.write('this child has experienced ' + str(pl_num) + ' placements since ' + str(pl_start))
-			# st.write(source.head(2))
-
-			plot_group1, plot_group2 = plot_multi(source)
-			st.write(plot_group1)
-			st.write(plot_group2)
-
-			# st.map()
-				# df = pd. DataFrame(
-				# np.random.randn(200, 3),
-				# columns=['a', 'b', 'c'])
-
-				# c = alt.Chart(df).mark_circle().encode(
-				# 	x='a', y='b', size='c', color='c', tooltip=['a', 'b', 'c'])
-			
-				# st.write(c)
-		if (num_prev_placements > 0) & (num_prev_placements < 50):	
+		if num_prev_placements > 0:
 			st.header("Previous Placement Information")
 			child_date_of_first_placement = st.date_input("What was the start date for the very first placement?", datetime.date(2015,1,1), min_value = (datetime.datetime.now() - datetime.timedelta(days = 6570)), max_value = datetime.datetime.now())
 			child_num_prev_placements_good = st.number_input('Out of the total previous placements, how many of them had a POSITIVE outcome?', min_value = 0, max_value = num_prev_placements, step = 1)

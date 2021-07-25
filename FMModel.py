@@ -5,7 +5,6 @@ import torch.nn as nn
 import torch.optim as optim
 import time
 import numpy as np
-from sklearn.manifold import TSNE
 
 import math
 from torch.utils.data import Dataset
@@ -14,7 +13,6 @@ import seaborn as sns
 import torch.nn.functional as F
 import matplotlib.pyplot as plt
 import functools
-from sklearn.metrics.pairwise import cosine_similarity
 import streamlit as st
 import datetime
 

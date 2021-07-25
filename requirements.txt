@@ -1,7 +1,6 @@
 -f https://download.pytorch.org/whl/torch_stable.html
 
 torch==1.9.0+cpu
-torchvision==0.9.1+cpu
 streamlit==0.84.2
 numpy==1.18.1
 pandas==1.2.5
@@ -10,5 +9,4 @@ python-dateutil==2.8.1
 pickleshare==0.7.5
 xgboost==1.4.2
 matplotlib==3.1.2
-sklearn==0.0
 

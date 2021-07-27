@@ -22,6 +22,7 @@ from PIL import Image
 
 
 #### Creating pages for website
+st.set_page_config(layout="wide")
 st.sidebar.title('Foster Care Matcher')
 mypage = st.sidebar.radio('Pages', ['Home', 'Matcher', 'Journey', 'Architecture', 'Modeling', 'Team'])
 
@@ -343,6 +344,7 @@ elif mypage == 'Matcher':
 			duration_prediction = DurationModel.get_duration(duration_model, duration_error_table, placements_to_predict)
 			probability_prediction = DurationModel.get_probability_of_good_outcome(probability_model, placements_to_predict)
 			final_providers = pd.concat([recommended_providers, duration_prediction, probability_prediction], axis = 1)
+			# st.write(final_providers)
 			### FINISH RUNNING DURATION AND PROBABILITY MODELS ###
 
 
@@ -356,10 +358,10 @@ elif mypage == 'Matcher':
 			st.title('Top Matched Providers')
 			button_dict = {}
 			for index, row in final_providers.iterrows():
-				st.write(str(index + 1),". ", row["PROVIDER_NAME"], '    (Provider ID: ', row["PROVIDER_ID"], ") ------- ", row["FLAGS"])
+				st.write(str(index + 1),". ", "Unknown" if type(row["PROVIDER_NAME"])==float else row["PROVIDER_NAME"], '    (Provider ID: ', row["PROVIDER_ID"], ") ------- ", row["FLAGS"])
 				# st.write("Flags: ", row["FLAGS"])
-				st.write("Number of Children Fostered: ", row["PROVIDER_NUM_PREV_PLACEMENTS"])
-				st.write("Positive Placement Outcome rate: ", round(row["PROVIDER_NUM_PREV_PLACEMENTS_GOOD_PERC"]*100,1), '%')
+				st.write("Number of Children Fostered: ", "Unknown" if np.isnan(row["PROVIDER_NUM_PREV_PLACEMENTS"]) else row["PROVIDER_NUM_PREV_PLACEMENTS"])
+				st.write("Positive Placement Outcome rate: ", "Unknown" if np.isnan(round(row["PROVIDER_NUM_PREV_PLACEMENTS_GOOD_PERC"]*100,1)) else round(row["PROVIDER_NUM_PREV_PLACEMENTS_GOOD_PERC"]*100,1), '%')
 				st.write("Match Rating: ", round(row.RATING,2))
 				st.write("Estimated Stay Duration: ", int(round(row["Predicted Duration"],0)), "days")
 				st.write("Probability of Positive Outcome: ", round(row["Probability of Good Outcome"]*100,2), "%")

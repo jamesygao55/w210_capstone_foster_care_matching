@@ -360,7 +360,7 @@ elif mypage == 'Matcher':
 			for index, row in final_providers.iterrows():
 				st.write(str(index + 1),". ", "Unknown" if type(row["PROVIDER_NAME"])==float else row["PROVIDER_NAME"], '    (Provider ID: ', row["PROVIDER_ID"], ") ------- ", row["FLAGS"])
 				# st.write("Flags: ", row["FLAGS"])
-				st.write("Number of Children Fostered: ", "Unknown" if np.isnan(row["PROVIDER_NUM_PREV_PLACEMENTS"]) else row["PROVIDER_NUM_PREV_PLACEMENTS"])
+				st.write("Number of Children Fostered: ", "Unknown" if np.isnan(row["PROVIDER_NUM_PREV_PLACEMENTS"]) else int(round(row["PROVIDER_NUM_PREV_PLACEMENTS"])))
 				st.write("Positive Placement Outcome rate: ", "Unknown" if np.isnan(round(row["PROVIDER_NUM_PREV_PLACEMENTS_GOOD_PERC"]*100,1)) else round(row["PROVIDER_NUM_PREV_PLACEMENTS_GOOD_PERC"]*100,1), '%')
 				st.write("Match Rating: ", round(row.RATING,2))
 				st.write("Estimated Stay Duration: ", int(round(row["Predicted Duration"],0)), "days")

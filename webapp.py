@@ -1,6 +1,3 @@
-
-
-
 import streamlit as st
 import pandas as pd
 import numpy as np
@@ -16,10 +13,13 @@ import DurationModel as DurationModel
 
 from altair.vegalite.v4.schema.channels import X
 import altair as alt
-import geopandas as gpd
+# import geopandas as gpd
 from PIL import Image
 
-
+#---------------------------------#
+# Page layout
+## Page expands to full width
+st.set_page_config(layout="wide")
 
 #### Creating pages for website
 st.sidebar.title('Foster Care Matcher')
@@ -41,7 +41,7 @@ st.sidebar.text('University of California, Berkeley')
 
 ### HOME PAGE ###
 if mypage == 'Home':
-	image = Image.open('homepage_image.jpg')
+	image = Image.open('homepage_image2.jpg')
 	st.image(image, width = 800)
 	
 	st.title('Foster Care Matcher')
@@ -400,11 +400,11 @@ elif mypage == 'Journey':
 			
 		def plot_multi(source):
 			# import geopandas as gpd
-			gdf = gpd.read_file('https://raw.githubusercontent.com/python-visualization/folium/master/tests/us-states.json', driver='GeoJSON')
-			gdf = gdf[gdf.id=='FL']
-			base = alt.Chart(gdf).mark_geoshape(
-			stroke='gray', 
-			fill='lightgrey')	
+			# gdf = gpd.read_file('https://raw.githubusercontent.com/python-visualization/folium/master/tests/us-states.json', driver='GeoJSON')
+			# gdf = gdf[gdf.id=='FL']
+			# base = alt.Chart(gdf).mark_geoshape(
+			# stroke='gray', 
+			# fill='lightgrey')	
 
 			points = alt.Chart(source).mark_circle().encode(
 			longitude='longitude:Q',
@@ -468,10 +468,38 @@ elif mypage == 'Journey':
 
 ### ARCHITECTURE PAGE ###
 elif mypage == 'Architecture':
-	st.title('Foster Care Matcher')
-	st.header('Features about Foster Care Matcher')
-	st.write('Process on creating this')
+	st.title('Architecture and Workflow of Foster Care Matcher')
+	# st.header('Features about Foster Care Matcher')
+	# st.write('Process on creating this')
+	# set the page layout
+	# st.set_page_config(layout="wide")
 
+	header = st.beta_container()
+	# product = st.beta_container()
+
+	with header:
+		# st.title('Foster Care Matcher ')
+		# st.header('Features about Foster Care Matcher')
+		st.header('this is end to end pipeline from data ingestion to app deloyment')
+		image = Image.open('architecture_design.png').convert('RGB').save('architecture_new.png')
+		image = Image.open('architecture_new.png')
+		st.image(image, width = 800)
+		# st.title('Foster Care Matcher')
+		# st.header('Features about Foster Care Matcher')
+		# st.subheader('this is data pipeline and ML pipeline')
+		# st.write('Process on creating this')
+
+
+	# with product:
+	# 	st.subheader('this is the past journey of this child through foster care system ')
+	# 	df = pd. DataFrame(
+	# 	np.random.randn(200, 3),
+	# 	columns=['a', 'b', 'c'])
+
+	# 	c = alt.Chart(df).mark_circle().encode(
+	# 		x='a', y='b', size='c', color='c', tooltip=['a', 'b', 'c'])
+	
+	# 	st.write(c)
 
 ### MODELING PAGE ###
 elif mypage == 'Modeling':

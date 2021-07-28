@@ -362,7 +362,7 @@ elif mypage == 'Matcher':
 				# st.write("Flags: ", row["FLAGS"])
 				st.write("Number of Children Fostered: ", "Unknown" if np.isnan(row["PROVIDER_NUM_PREV_PLACEMENTS"]) else int(round(row["PROVIDER_NUM_PREV_PLACEMENTS"])))
 				st.write("Positive Placement Outcome rate: ", "Unknown" if np.isnan(round(row["PROVIDER_NUM_PREV_PLACEMENTS_GOOD_PERC"]*100,1)) else round(row["PROVIDER_NUM_PREV_PLACEMENTS_GOOD_PERC"]*100,1), '%')
-				st.write("Match Rating: ", round(row.RATING,2))
+				st.write("Match Rating: ", round(row.RATING,2), "/5")
 				st.write("Estimated Stay Duration: ", int(round(row["Predicted Duration"],0)), "days")
 				st.write("Probability of Positive Outcome: ", round(row["Probability of Good Outcome"]*100,2), "%")
 				button_dict["string{}".format(index)] = st.button("See Breakdown of Outcome Predictions", key = str(index))

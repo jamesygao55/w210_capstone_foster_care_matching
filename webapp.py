@@ -15,6 +15,7 @@ from altair.vegalite.v4.schema.channels import X
 import altair as alt
 # import geopandas as gpd
 from PIL import Image
+import time
 
 #---------------------------------#
 # Page layout
@@ -41,8 +42,8 @@ st.sidebar.text('University of California, Berkeley')
 
 ### HOME PAGE ###
 if mypage == 'Home':
-	image = Image.open('homepage_image2.jpg')
-	st.image(image, width = 800)
+	image = Image.open('homepage_children.jpg')
+	st.image(image, width = 1200)
 	
 	st.title('Foster Care Matcher')
 	st.markdown("""
@@ -60,7 +61,7 @@ elif mypage == 'Matcher':
 		# Creating the Titles and Image	
 		st.title("Foster Care Matcher")
 		st.header("Find the right foster care provider for your child")
-		st.write("Use all of the existing available data on previous placements to find the best Provider whose suited to care for the new foster child")
+		st.subheader("Use all of the existing available data on previous placements to find the best Provider whose suited to care for the new foster child")
 
 
 	with product:
@@ -80,6 +81,7 @@ elif mypage == 'Matcher':
 		child_emotdist_flag = False
 		child_othermed_flag = False
 		child_clindis = 'Select one'
+		# child_multi_dis = 'Select all that apply'
 		child_everadpt = 'Select one'
 		child_everadpt_age = float("Nan")
 		current_case_goal = 'Select one'
@@ -88,105 +90,136 @@ elif mypage == 'Matcher':
 		if 'resetter' not in st.session_state:
 			st.session_state['resetter'] = False
 
-		placed_before = st.selectbox("Has this child been placed before?", ['Select one', 'Yes', 'No'])
-
-		if placed_before == 'Yes':
-			num_prev_placements = st.number_input('How many previous placements has this child had?', min_value = 0, max_value = 100, step = 1)
+		row0_1, row0_2 = st.beta_columns(2)
+		with row0_1:
+			placed_before = st.selectbox("Has this child been placed before?", ['Select one', 'Yes', 'No'])
+		with row0_2:
+			if placed_before == 'Yes':
+				num_prev_placements = st.number_input('How many previous placements has this child had?', min_value = 0, max_value = 100, step = 1)
 
 		if num_prev_placements > 0:
 			st.header("Previous Placement Information")
-			child_date_of_first_placement = st.date_input("What was the start date for the very first placement?", datetime.date(2015,1,1), min_value = (datetime.datetime.now() - datetime.timedelta(days = 6570)), max_value = datetime.datetime.now())
-			child_num_prev_placements_good = st.number_input('Out of the total previous placements, how many of them had a POSITIVE outcome?', min_value = 0, max_value = num_prev_placements, step = 1)
-			child_num_prev_placements_bad = st.number_input('Out of the total previous placements, how many of them had a NEGATIVE outcome?', min_value = 0, max_value = num_prev_placements, step = 1)
-			st.text("Remaining placements will be counted as having a NEUTRAL outcome.")
-			st.text("")
-			child_recent_placement_outcome = st.selectbox("What was the outcome of the child's most recent placement?", ['Select one', 'Positive', 'Neutral', 'Negative'])
+			row1_1, row1_2 = st.beta_columns(2)
+			with row1_1:
+				child_date_of_first_placement = st.date_input("What was the start date for the very first placement?", datetime.date(2015,1,1), min_value = (datetime.datetime.now() - datetime.timedelta(days = 6570)), max_value = datetime.datetime.now())
+			with row1_2:
+				child_num_prev_placements_good = st.number_input('Out of the total previous placements, how many of them had a POSITIVE outcome?', min_value = 0, max_value = num_prev_placements, step = 1)
+			row2_1, row2_2 = st.beta_columns(2)
+			with row2_1:
+				child_num_prev_placements_bad = st.number_input('Out of the total previous placements, how many of them had a NEGATIVE outcome?', min_value = 0, max_value = num_prev_placements-child_num_prev_placements_good, step = 1)
+			with row2_2:
+				# st.text("Remaining placements will be counted as having a NEUTRAL outcome.")
+			# st.text("")
+				child_recent_placement_outcome = st.selectbox("What was the outcome of the child's most recent placement?", ['Select one', 'Positive', 'Neutral', 'Negative'])
 
 		if child_recent_placement_outcome != 'Select one' or placed_before == 'No':
 			st.header("Child and Removal Information")
-			child_ctkfamst = st.selectbox("What kind of caretaker was the child removed from?", ['Select one', 'Married Couple', 'Unmarried Couple', 'Single Female', 'Single Male'])
-			child_caretakerage = st.number_input("Enter the age (in years) of the child's caretaker at the time of removal? (If there was more than one caretaker, put the age of just one of them)", min_value = 0, max_value = 100, step = 1)
-			child_birthday = st.date_input("Child's birthday", datetime.date(2015,1,1), min_value = (datetime.datetime.now() - datetime.timedelta(days = 6570)), max_value = datetime.datetime.now())
-			child_gender = st.selectbox("Child's gender", ['Select one', 'Male', 'Female'])
-			child_race = st.selectbox("Child's Race", ['Select one', 'White', 'Black', 'Asian', 'Pacific Islander', 'Native American', 'Multi-Racial'])
-			child_hispanic = st.selectbox("Is the child Hispanic?", ['Select one', 'Yes', 'No'])
+			row3_1, row3_2 = st.beta_columns(2)
+			with row3_1:
+				child_ctkfamst = st.selectbox("What kind of caretaker was the child removed from?", ['Select one', 'Married Couple', 'Unmarried Couple', 'Single Female', 'Single Male'])
+			with row3_2:
+				child_caretakerage = st.number_input("Enter the age (in years) of the child's caretaker at the time of removal? (If there was more than one caretaker, put the age of just one of them)", min_value = 0, max_value = 100, step = 1)
+			row4_1, row4_2 = st.beta_columns(2)
+			with row4_1:
+				child_birthday = st.date_input("Child's birthday", datetime.date(2015,1,1), min_value = (datetime.datetime.now() - datetime.timedelta(days = 6570)), max_value = datetime.datetime.now())
+			with row4_2:
+				child_gender = st.selectbox("Child's gender", ['Select one', 'Male', 'Female'])
+			row5_1, row5_2 = st.beta_columns(2)
+			with row5_1:
+				child_race = st.selectbox("Child's Race", ['Select one', 'White', 'Black', 'Asian', 'Pacific Islander', 'Native American', 'Multi-Racial'])
+			with row5_2:
+				child_hispanic = st.selectbox("Is the child Hispanic?", ['Select one', 'Yes', 'No'])
 
 		if child_hispanic != 'Select one':
 			st.text("")
-			st.write("Child's Disabilities")
-			child_clindis = st.selectbox("Has the child been clinically diagnosed with disabilities?", ['Select one', 'Yes', 'No', 'Not yet determined'])
+			st.header("Child's Disabilities")
+			row6_1, row6_2 = st.beta_columns(2)
+			with row6_1:
+				child_clindis = st.selectbox("Has the child been clinically diagnosed with disabilities?", ['Select one', 'Yes', 'No', 'Not yet determined'])
 
 		if child_clindis == 'Yes':
-			st.write("Check all that apply:")
-			child_mr_flag = st.checkbox("Mental Retardation")
-			child_vishear_flag = st.checkbox("Visually or Hearing Impaired")
-			child_phydis_flag = st.checkbox("Physically Disabled")
-			child_emotdist_flag = st.checkbox("Emotionally Disturbed")
-			child_othermed_flag = st.checkbox("Other Medically Diagnosed Condition")
+			with row6_2:
+				st.write("Check all that apply:")
+				# child_multi_dis = st.multiselect('Select all that apply', ["Mental Retardation","Visually or Hearing Impaired","Physically Disabled","Emotionally Disturbed","Other Medically Diagnosed Condition"])
+				child_mr_flag = st.checkbox("Mental Retardation")
+				child_vishear_flag = st.checkbox("Visually or Hearing Impaired")
+				child_phydis_flag = st.checkbox("Physically Disabled")
+				child_emotdist_flag = st.checkbox("Emotionally Disturbed")
+				child_othermed_flag = st.checkbox("Other Medically Diagnosed Condition")
 
 		if child_clindis != 'Select one':
 			st.text("")
-			child_iswaiting = st.selectbox("Is the child currently waiting for adoption?", ['Select one', 'Yes', 'No'])
-			child_everadpt = st.selectbox("Has the child ever been adopted?", ['Select one', 'Yes', 'No'])
-
+			row7_1, row7_2 = st.beta_columns(2)
+			with row7_1:
+				child_iswaiting = st.selectbox("Is the child currently waiting for adoption?", ['Select one', 'Yes', 'No'])
+			with row7_2:
+				child_everadpt = st.selectbox("Has the child ever been adopted?", ['Select one', 'Yes', 'No'])
 
 		if child_everadpt == 'Yes':
-			child_everadpt_age = st.slider("How old was the child at the time of their most recent adoption? (Years)", min_value=0, max_value=18)
-			
+			row8_1, row8_2 = st.beta_columns(2)
+			with row8_1:
+				child_everadpt_age = st.slider("How old was the child at the time of their most recent adoption? (Years)", min_value=0, max_value=18)
+			with row8_2:
+				st.text("")
 
 		if child_everadpt != 'Select one':
 			st.text("")
-			st.write("Why did the child enter the foster care system? (Check all that apply)")
+			st.subheader("Why did the child enter the foster care system? (Check all that apply)")
 			
-			col1, col2 = st.beta_columns(2)
-
-			physical_abuse = col1.checkbox('Physical Abuse')
-			sexual_abuse = col1.checkbox('Sexual Abuse')
-			emotional_abuse_neglect = col1.checkbox('Emotional Abuse')
-			physical_neglect = col1.checkbox("Physical Neglect")
-			medical_neglect = col1.checkbox("Medical Neglect")
-			alcohol_abuse_child = col1.checkbox("Child's Alcohol Abuse")
-			drug_abuse_child = col1.checkbox("Child's Drug Abuse")
-			child_behavior_problem = col1.checkbox('Child Behavior Problem')
-			child_disability = col1.checkbox('Child Disability')
-			transition_to_independence = col1.checkbox("Transition to Independence")
-			inadequate_supervision = col1.checkbox("Inadequate Supervision")
-			adoption_dissolution = col1.checkbox("Adoption Dissolution")
-			abandonment = col1.checkbox("Abandonment")
-			labor_trafficking = col1.checkbox("Labor Trafficking")
-			sexual_abuse_sexual_exploitation = col1.checkbox("Sexual Exploitation")
-			
-			prospective_physical_abuse = col2.checkbox("Prospective Physical Abuse")
-			prospective_sexual_abuse = col2.checkbox('Prospective Sexual Abuse')
-			prospective_emotional_abuse_neglect = col2.checkbox("Prospective Emotional Abuse")
-			prospective_physical_neglect = col2.checkbox('Prospective Physical Neglect')
-			prospective_medical_neglect = col2.checkbox("Prospective Medical Neglect")
-			alcohol_abuse_parent = col2.checkbox("Parent's Alcohol Abuse")
-			drug_abuse_parent = col2.checkbox("Parent's Drug Abuse")
-			incarceration_of_parent = col2.checkbox('Incarceration of Parent')
-			death_of_parent = col2.checkbox('Death of Parent')
-			domestic_violence = col2.checkbox("Domestic Violence")
-			inadequate_housing = col2.checkbox("Inadequate Housing")
-			caregiver_inability_to_cope = col2.checkbox("Caregiver's inability to cope")
-			relinquishment = col2.checkbox('Relinquishment')
-			request_for_service = col2.checkbox('Request for Service')
-			csec = col2.checkbox("CSEC")
+			row9_1, row9_2, row9_3 = st.beta_columns(3)
+			with row9_1:
+				physical_abuse = st.checkbox('Physical Abuse')
+				sexual_abuse = st.checkbox('Sexual Abuse')
+				emotional_abuse_neglect = st.checkbox('Emotional Abuse')
+				physical_neglect = st.checkbox("Physical Neglect")
+				medical_neglect = st.checkbox("Medical Neglect")
+				alcohol_abuse_child = st.checkbox("Child's Alcohol Abuse")
+				drug_abuse_child = st.checkbox("Child's Drug Abuse")
+				child_behavior_problem = st.checkbox('Child Behavior Problem')
+				child_disability = st.checkbox('Child Disability')
+				transition_to_independence = st.checkbox("Transition to Independence")
+			with row9_2:
+				inadequate_supervision = st.checkbox("Inadequate Supervision")
+				adoption_dissolution = st.checkbox("Adoption Dissolution")
+				abandonment = st.checkbox("Abandonment")
+				labor_trafficking = row9_2.checkbox("Labor Trafficking")
+				sexual_abuse_sexual_exploitation = st.checkbox("Sexual Exploitation")
+				prospective_physical_abuse = st.checkbox("Prospective Physical Abuse")
+				prospective_sexual_abuse = st.checkbox('Prospective Sexual Abuse')
+				prospective_emotional_abuse_neglect = st.checkbox("Prospective Emotional Abuse")
+				prospective_physical_neglect = st.checkbox('Prospective Physical Neglect')
+				prospective_medical_neglect = st.checkbox("Prospective Medical Neglect")
+			with row9_3:
+				alcohol_abuse_parent = st.checkbox("Parent's Alcohol Abuse")
+				drug_abuse_parent = st.checkbox("Parent's Drug Abuse")
+				incarceration_of_parent = st.checkbox('Incarceration of Parent')
+				death_of_parent = st.checkbox('Death of Parent')
+				domestic_violence = st.checkbox("Domestic Violence")
+				inadequate_housing = st.checkbox("Inadequate Housing")
+				caregiver_inability_to_cope = st.checkbox("Caregiver's inability to cope")
+				relinquishment = st.checkbox('Relinquishment')
+				request_for_service = st.checkbox('Request for Service')
+				csec = st.checkbox("CSEC")
 
 			st.header("Current placement information")
-			current_case_goal = st.selectbox("What is the goal for this placement based on the child's case plan?", ['Select one', 'Reunification', 'Live with Other Relatives', 'Adoption', 'Long Term Foster Care', 'Emancipation', 'Guardianship', 'Goal Not Yet Established'])
+			row10_1, row10_2, row10_3 = st.beta_columns(3)
+			with row10_1:
+				current_case_goal = st.selectbox("What is the goal for this placement based on the child's case plan?", ['Select one', 'Reunification', 'Live with Other Relatives', 'Adoption', 'Long Term Foster Care', 'Emancipation', 'Guardianship', 'Goal Not Yet Established'])
 			
 		if current_case_goal != 'Select one':
 			st.text("")
-			st.write("Current placement's applicable payments")
-			current_case_ivefc = st.checkbox("Foster Care Payments")
-			current_case_iveaa = st.checkbox("Adoption Assistance")
-			current_case_ivaafdc = st.checkbox("TANF Payment (Temporary Assistance for Needy Families)")
-			current_case_ivdchsup = st.checkbox("Child Support Funds")
-			current_case_xixmedcd = st.checkbox("Medicaid")
-			current_case_ssiother = st.checkbox("SSI or Social Security Benefits")
-			current_case_noa = st.checkbox("Only State or Other Support")
-			current_case_payments_none = st.checkbox("None of the above apply")
-			current_case_fcmntpay = st.number_input("Monthly Foster Care Payment ($)", min_value = 0, step = 100)
+			with row10_2:
+				st.write("Current placement's applicable payments")
+				current_case_ivefc = st.checkbox("Foster Care Payments")
+				current_case_iveaa = st.checkbox("Adoption Assistance")
+				current_case_ivaafdc = st.checkbox("TANF Payment (Temporary Assistance for Needy Families)")
+				current_case_ivdchsup = st.checkbox("Child Support Funds")
+				current_case_xixmedcd = st.checkbox("Medicaid")
+				current_case_ssiother = st.checkbox("SSI or Social Security Benefits")
+				current_case_noa = st.checkbox("Only State or Other Support")
+				current_case_payments_none = st.checkbox("None of the above apply")
+			with row10_3:
+				current_case_fcmntpay = st.number_input("Monthly Foster Care Payment ($)", min_value = 0, step = 100)
 			st.text("")
 			st.text("")
 			find_providers_button = st.button("Find Providers")
@@ -196,9 +229,10 @@ elif mypage == 'Matcher':
 		if find_providers_button:
 			st.session_state['resetter'] = True
 
-
+			# st.balloons()
 		## Recommender System output 
 		if st.session_state['resetter'] == True:
+			
 
 			## construct child record using user_input
 			child_input_record_data = {
@@ -345,7 +379,7 @@ elif mypage == 'Matcher':
 			final_providers = pd.concat([recommended_providers, duration_prediction, probability_prediction], axis = 1)
 			### FINISH RUNNING DURATION AND PROBABILITY MODELS ###
 
-
+			# st.balloons()
 			### FORMAT OUTPUT ###
 			# st.write(recommended_providers)
 			# st.write(duration_prediction)
@@ -369,6 +403,7 @@ elif mypage == 'Matcher':
 				st.text('')
 				st.text('')
 
+			# st.balloons()
 
 ### JOURNEY PAGE ###
 elif mypage == 'Journey':
@@ -481,9 +516,9 @@ elif mypage == 'Architecture':
 		# st.title('Foster Care Matcher ')
 		# st.header('Features about Foster Care Matcher')
 		st.header('this is end to end pipeline from data ingestion to app deloyment')
-		image = Image.open('architecture_design.png').convert('RGB').save('architecture_new.png')
+		image = Image.open('Architecture_design2.png').convert('RGB').save('architecture_new.png')
 		image = Image.open('architecture_new.png')
-		st.image(image, width = 800)
+		st.image(image, width = 1000)
 		# st.title('Foster Care Matcher')
 		# st.header('Features about Foster Care Matcher')
 		# st.subheader('this is data pipeline and ML pipeline')

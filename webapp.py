@@ -96,8 +96,9 @@ elif mypage == 'Matcher':
 		with row0_2:
 			if placed_before == 'Yes':
 				num_prev_placements = st.number_input('How many previous placements has this child had?', min_value = 0, max_value = 100, step = 1)
-
+				
 		if num_prev_placements > 0:
+			st.write("______________________________________________________________________________________")
 			st.header("Previous Placement Information")
 			row1_1, row1_2 = st.beta_columns(2)
 			with row1_1:
@@ -111,17 +112,19 @@ elif mypage == 'Matcher':
 				# st.text("Remaining placements will be counted as having a NEUTRAL outcome.")
 			# st.text("")
 				child_recent_placement_outcome = st.selectbox("What was the outcome of the child's most recent placement?", ['Select one', 'Positive', 'Neutral', 'Negative'])
+		
 
 		if child_recent_placement_outcome != 'Select one' or placed_before == 'No':
+			st.write("______________________________________________________________________________________")
 			st.header("Child and Removal Information")
 			row3_1, row3_2 = st.beta_columns(2)
 			with row3_1:
 				child_ctkfamst = st.selectbox("What kind of caretaker was the child removed from?", ['Select one', 'Married Couple', 'Unmarried Couple', 'Single Female', 'Single Male'])
 			with row3_2:
-				child_caretakerage = st.number_input("Enter the age (in years) of the child's caretaker at the time of removal? (If there was more than one caretaker, put the age of just one of them)", min_value = 0, max_value = 100, step = 1)
+				child_caretakerage = st.number_input("Enter the age (in years) of the child's caretaker at the time of removal? (If there was more than one caretaker, put the age of just one of them)", min_value = 15, max_value = 80, step = 1)
 			row4_1, row4_2 = st.beta_columns(2)
 			with row4_1:
-				child_birthday = st.date_input("Child's birthday", datetime.date(2015,1,1), min_value = (datetime.datetime.now() - datetime.timedelta(days = 6570)), max_value = datetime.datetime.now())
+				child_birthday = st.date_input("Child's birthday - must be same or earlier than start date of first placement", datetime.date(2015,1,1), min_value = (datetime.datetime.now() - datetime.timedelta(days = 6570)), max_value = datetime.datetime.now())
 			with row4_2:
 				child_gender = st.selectbox("Child's gender", ['Select one', 'Male', 'Female'])
 			row5_1, row5_2 = st.beta_columns(2)
@@ -131,6 +134,7 @@ elif mypage == 'Matcher':
 				child_hispanic = st.selectbox("Is the child Hispanic?", ['Select one', 'Yes', 'No'])
 
 		if child_hispanic != 'Select one':
+			st.write("______________________________________________________________________________________")
 			st.text("")
 			st.header("Child's Disabilities")
 			row6_1, row6_2 = st.beta_columns(2)
@@ -146,8 +150,10 @@ elif mypage == 'Matcher':
 				child_phydis_flag = st.checkbox("Physically Disabled")
 				child_emotdist_flag = st.checkbox("Emotionally Disturbed")
 				child_othermed_flag = st.checkbox("Other Medically Diagnosed Condition")
-
+		
+		
 		if child_clindis != 'Select one':
+			st.write("______________________________________________________________________________________")
 			st.text("")
 			row7_1, row7_2 = st.beta_columns(2)
 			with row7_1:
@@ -161,8 +167,9 @@ elif mypage == 'Matcher':
 				child_everadpt_age = st.slider("How old was the child at the time of their most recent adoption? (Years)", min_value=0, max_value=18)
 			with row8_2:
 				st.text("")
-
+		
 		if child_everadpt != 'Select one':
+			st.write("______________________________________________________________________________________")
 			st.text("")
 			st.subheader("Why did the child enter the foster care system? (Check all that apply)")
 			
@@ -200,9 +207,12 @@ elif mypage == 'Matcher':
 				relinquishment = st.checkbox('Relinquishment')
 				request_for_service = st.checkbox('Request for Service')
 				csec = st.checkbox("CSEC")
-
+			st.write("______________________________________________________________________________________")
+		# if current_case_goal != 'Select one':
+			# st.write("______________________________________________________________________________________")
 			st.header("Current placement information")
 			row10_1, row10_2, row10_3 = st.beta_columns(3)
+			# st.write("______________________________________________________________________________________")
 			with row10_1:
 				current_case_goal = st.selectbox("What is the goal for this placement based on the child's case plan?", ['Select one', 'Reunification', 'Live with Other Relatives', 'Adoption', 'Long Term Foster Care', 'Emancipation', 'Guardianship', 'Goal Not Yet Established'])
 			
@@ -220,9 +230,9 @@ elif mypage == 'Matcher':
 				current_case_payments_none = st.checkbox("None of the above apply")
 			with row10_3:
 				current_case_fcmntpay = st.number_input("Monthly Foster Care Payment ($)", min_value = 0, step = 100)
-			st.text("")
-			st.text("")
-			find_providers_button = st.button("Find Providers")
+				st.text("")
+				st.text("")
+				find_providers_button = st.button("Find Providers")
 
 
 		## Once the button is pressed, the resetter will be set to True and will be updated in the Session State
@@ -232,6 +242,7 @@ elif mypage == 'Matcher':
 			# st.balloons()
 		## Recommender System output 
 		if st.session_state['resetter'] == True:
+			st.write("______________________________________________________________________________________")
 			
 
 			## construct child record using user_input
@@ -278,10 +289,10 @@ elif mypage == 'Matcher':
 			,'NEW_REMOVAL':[1.0 if placed_before == 'Yes' else 0.0]
 			# 	#,REMOVAL_LENGTH #Need to make reflective as of placement begin date   
 			# 	#,PLACEMENT_NUMBER #Need to apply after using James's flattened version
-			,'CHILD_NUM_PREV_PLACEMENTS':[float(num_prev_placements)]
-			,'CHILD_NUM_PREV_PLACEMENTS_GOOD':[float(child_num_prev_placements_good)]
-			,'CHILD_NUM_PREV_PLACEMENTS_NEUTRAL':[max(float(num_prev_placements - child_num_prev_placements_good - child_num_prev_placements_bad), 0)]
-			,'CHILD_NUM_PREV_PLACEMENTS_BAD':[float(child_num_prev_placements_bad)]
+			,'CHILD_NUM_PREV_PLACEMENTS':[int(num_prev_placements)]
+			,'CHILD_NUM_PREV_PLACEMENTS_GOOD':[int(child_num_prev_placements_good)]
+			,'CHILD_NUM_PREV_PLACEMENTS_NEUTRAL':[max(int(num_prev_placements - child_num_prev_placements_good - child_num_prev_placements_bad), 0)]
+			,'CHILD_NUM_PREV_PLACEMENTS_BAD':[int(child_num_prev_placements_bad)]
 			,'CHILD_PREV_PLACEMENT_OUTCOME_1.0':[1 if child_recent_placement_outcome == 'Positive' else 0]
 			,'CHILD_PREV_PLACEMENT_OUTCOME_2.0':[1 if child_recent_placement_outcome == 'Neutral' else 0]
 			,'CHILD_PREV_PLACEMENT_OUTCOME_3.0':[1 if child_recent_placement_outcome == 'Negative' else 0]
@@ -383,9 +394,9 @@ elif mypage == 'Matcher':
 			### FORMAT OUTPUT ###
 			# st.write(recommended_providers)
 			# st.write(duration_prediction)
-			st.text('')
-			st.text('')
-			st.text('')
+			# st.text('')
+			# st.text('')
+			# st.text('')
 			st.text('')
 			st.title('Top Matched Providers')
 			button_dict = {}
@@ -402,11 +413,14 @@ elif mypage == 'Matcher':
 					DurationModel.get_probability_distribution(placements_to_predict.iloc[[index]], probability_model)
 				st.text('')
 				st.text('')
-
-			# st.balloons()
+	
+	# st.session_state['resetter'] = False		
+# st.balloons()
 
 ### JOURNEY PAGE ###
 elif mypage == 'Journey':
+	st.session_state['resetter'] = False
+	# st.session_state['resetter'] = True
 	header = st.beta_container()
 	product = st.beta_container()
 
@@ -503,6 +517,7 @@ elif mypage == 'Journey':
 
 ### ARCHITECTURE PAGE ###
 elif mypage == 'Architecture':
+	st.session_state['resetter'] = False
 	st.title('Architecture and Workflow of Foster Care Matcher')
 	# st.header('Features about Foster Care Matcher')
 	# st.write('Process on creating this')
@@ -515,7 +530,7 @@ elif mypage == 'Architecture':
 	with header:
 		# st.title('Foster Care Matcher ')
 		# st.header('Features about Foster Care Matcher')
-		st.header('this is end to end pipeline from data ingestion to app deloyment')
+		st.header('This is end to end pipeline from data ingestion to app deloyment')
 		image = Image.open('Architecture_design2.png').convert('RGB').save('architecture_new.png')
 		image = Image.open('architecture_new.png')
 		st.image(image, width = 1000)

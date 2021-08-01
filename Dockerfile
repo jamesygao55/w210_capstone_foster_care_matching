@@ -1,6 +1,6 @@
 #Base Image to use
-From pytorch/pytorch-binary-docker-image-ubuntu16.04
-# FROM python:3.7.9-slim
+#From pytorch/pytorch-binary-docker-image-ubuntu16.04
+FROM python:3.8-buster
 
 #Expose port 8080
 EXPOSE 8080

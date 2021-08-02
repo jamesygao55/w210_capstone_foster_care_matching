@@ -116,7 +116,7 @@ def cs_sidebar():
 #	st.write(BANNERsmall,unsafe_allow_html=True) 
 
 
-	mypage = st.sidebar.radio(' ', ['Home', 'Matcher', 'Journey', 'Architecture', 'Modeling', 'Team'])
+	mypage = st.sidebar.radio('Pages', ['Home', 'Matcher', 'Journey', 'Architecture', 'Modeling', 'Team'])
 
 	st.sidebar.title('')
 	st.sidebar.title('')
@@ -701,7 +701,7 @@ def cs_architecture():
 	st.write(BANNERsmall,unsafe_allow_html=True) 
 
 	st.session_state['resetter'] = False
-	st.title('Data Pipeline and App Deployment')
+	st.title('Architecture and Workflow of Foster Care Matcher')
 	# st.header('Features about Foster Care Matcher')
 	# st.write('Process on creating this')
 	# set the page layout
@@ -713,7 +713,9 @@ def cs_architecture():
 	with header:
 		# st.title('Foster Care Matcher ')
 		# st.header('Features about Foster Care Matcher')
-		image = Image.open('APP GCP diagram.png')	
+		st.header('This is end to end pipeline from data ingestion to app deloyment')
+		image = Image.open('Architecture_design2.png').convert('RGB').save('architecture_new.png')
+		image = Image.open('architecture_new.png')	
 		st.image(image, width = 1100)
 		# st.title('Foster Care Matcher')
 		# st.header('Features about Foster Care Matcher')

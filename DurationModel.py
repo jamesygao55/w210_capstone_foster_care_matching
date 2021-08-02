@@ -293,6 +293,7 @@ def get_probability_distribution(record, model_clf):
 
 
     # plt.show()
+    #return fig1
     st.pyplot(fig1)
 
 

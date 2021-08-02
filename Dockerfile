@@ -1,5 +1,4 @@
-#Base Image to use
-#From pytorch/pytorch-binary-docker-image-ubuntu16.04
+#Deploy from GCP
 FROM python:3.8-buster
 
 #Expose port 8080
@@ -18,4 +17,4 @@ COPY . /app
 WORKDIR /app
 
 #Run the application on port 8080
-ENTRYPOINT ["streamlit", "run", "webapp.py", "--server.port=8080", "--server.address=0.0.0.0"]
+CMD streamlit run --server.port 8080 --server.enableCORS false webapp.py

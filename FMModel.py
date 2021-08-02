@@ -76,17 +76,34 @@ def predict(device, iterator, model):
     concat_tensor = torch.cat((x.to(device), y_hat.unsqueeze(dim=1)), 1)
     return concat_tensor
     
+#get the most similar child id if it exists, else return 0
+def get_first_child(age,race,disability,placement,gender,templatechilddf):
+    
+    if ((templatechilddf.AGE_INDEX == age) &
+                            (templatechilddf.RACE_INDEX == race) &
+                            (templatechilddf.DISABILITY_INDEX == disability) & 
+                            (templatechilddf.PLACEMENT_INDEX == placement) &
+                            (templatechilddf.GENDER_INDEX == gender)).any():
+        child_index = templatechilddf[(templatechilddf.AGE_INDEX == age) &
+                            (templatechilddf.RACE_INDEX == race) &
+                            (templatechilddf.DISABILITY_INDEX == disability) & 
+                            (templatechilddf.PLACEMENT_INDEX == placement) &
+                            (templatechilddf.GENDER_INDEX == gender)].iloc[0].CHILD_INDEX
+        return child_index
+    else:
+        return 0  
+          
 #to get recommendations for the user input 
 #1.get look up values from UI
-def get_lookups(agelookupdf, racelookupdf, disabilitylookupdf, placementlookupdf, genderlookupdf, age = '13 and above',race = 'African American',disability = 'No Disability',placement = '5 and above', gender = 'Male'):
+def get_lookups(templatechilddf, agelookupdf, racelookupdf, disabilitylookupdf, placementlookupdf, genderlookupdf, age = '13 and above',race = 'African American',disability = 'No Disability',placement = '5 and above', gender = 'Male'):
     
     ageid = int(agelookupdf[agelookupdf.AGE_DEF == age].AGE_PLACED_INDEX)
     raceid = int(racelookupdf[racelookupdf.RACE_DEF == race].RACE_GROUP_INDEX)
     disability = int(disabilitylookupdf[disabilitylookupdf.DISABILITY_DEF == disability].DISABILITY_GROUP_INDEX)
     placement = int(placementlookupdf[placementlookupdf.PLACEMENT_DEF == placement].PLACEMENT_NUMBER_INDEX)
     gender = int(genderlookupdf[genderlookupdf.GENDER_DEF == gender].GENDER_INDEX)
-    
-    return ageid,raceid,disability,placement,gender
+    childid = get_first_child(ageid,raceid,disability,placement,gender,templatechilddf)
+    return childid,ageid,raceid,disability,placement,gender
 
 #2. get recommendations
 @st.cache
@@ -109,7 +126,6 @@ def get_recommendations(modelinfer, device, providers, provider_biases, provider
     pdata = construct_dataloader(feature_values,topN)
     y_pred = predict(device,pdata,modelinfer)
     px = pd.DataFrame(y_pred.cpu().numpy(), columns = ['CHILD_INDEX','PROVIDER_INDEX','AGE_PLACED_INDEX','RACE_GROUP_INDEX','DISABILITY_GROUP_INDEX','PLACEMENT_NUMBER_INDEX', 'GENDER_INDEX','RATING'])
-
     return(pd.merge(pdetailed, px, on = ['PROVIDER_INDEX'])[['PROVIDER_ID','provider_name_confidential','MAX_SETTING','FLAGS','RATING']].sort_values(by=['RATING'],ascending=False))         
 
 
@@ -130,12 +146,13 @@ def load_and_prep_datasets():
     disabilitylookupdf = pd.read_csv(PATH + '/disabilitylookup.csv', low_memory=False)
     placementlookupdf = pd.read_csv(PATH + '/placementlookup.csv', low_memory=False)
     genderlookupdf = pd.read_csv(PATH + '/genderlookup.csv', low_memory=False)
-
+    templatechilddf = pd.read_csv(PATH + '/templatechilddf.csv', low_memory=False)
+	
     #set feature columns and lengths
     feature_columns = ['CHILD_INDEX','PROVIDER_INDEX','AGE_PLACED_INDEX','RACE_GROUP_INDEX','DISABILITY_GROUP_INDEX','PLACEMENT_NUMBER_INDEX', 'GENDER_INDEX']
     lenmodel = ratingsdf[feature_columns].values.max() + 1
     lenfeatures = 120
-    return device, ratingsdf, agelookupdf, racelookupdf, disabilitylookupdf, placementlookupdf, genderlookupdf, lenmodel, lenfeatures
+    return device, templatechilddf, ratingsdf, agelookupdf, racelookupdf, disabilitylookupdf, placementlookupdf, genderlookupdf, lenmodel, lenfeatures
 
 
 

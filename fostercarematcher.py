@@ -46,7 +46,7 @@ HTML_WRAPPER3 = """<div style="background-color: #EAFAF1; overflow-x: auto; bord
 WHITECOLOR= '<p style="font-family:Courier; color:White; font-size: 20px;">....</p>'
 WHITECOLORsmall= '<p style="font-family:Courier; color:White; font-size: 11px;">....</p>'
 BANNER= '<p style="font-family:Helvetica Neue; color:Teal; font-size: 55px; line-height:25px;text-align: center;"><b>Foster Care Matcher</b></p>'
-BANNERsmall= '<p style="font-family:Arial; color:Teal; font-size: 20px;text-align: center;">Love. Heal. Respect. Cherish</p>'
+BANNERsmall= '<p style="font-family:Arial; color:Teal; font-size: 20px;text-align: center;">Love. Heal. Respect. Cherish.</p>'
 BANNERleft= '<p style="font-family:Helvetica Neue; color:Teal; font-size: 55px; line-height:25px;text-align: left;"><b>Foster Care Matcher</b></p>'
 BANNERlectsmall= '<p style="font-family:Arial; color:Teal; font-size: 20px;text-align: left;">Love. Heal. Respect. Cherish</p>'
 SIDEBARHEADING= '<p style="font-family:Arial; color:Teal; font-size: 20px;text-align: left;"><b>Foster Care Matcher</b></p>'
@@ -90,8 +90,6 @@ def main():
     	cs_journey()
     elif my_page == 'Architecture':
     	cs_architecture()
-    elif my_page == 'Modeling':
-    	cs_model()
     elif my_page == 'Team':
     	cs_team()
     return None
@@ -116,7 +114,7 @@ def cs_sidebar():
 #	st.write(BANNERsmall,unsafe_allow_html=True) 
 
 
-	mypage = st.sidebar.radio(' ', ['Home', 'Matcher', 'Journey', 'Architecture', 'Modeling', 'Team'])
+	mypage = st.sidebar.radio(' ', ['Home', 'Matcher', 'Journey', 'Architecture', 'Team'])
 
 	st.sidebar.title('')
 	st.sidebar.title('')
@@ -594,9 +592,7 @@ def cs_home():
 	st.image(image, width = 1200)
 	
 	st.title('Foster Care Matcher')
-	st.markdown("""
-	### This app provides a list of top quality matched providers to a prospect foster child with expected placement duration and probability of placement""")
-	st.write('Team **Foster Care Matching** or **CS: FB** (*A child saved, a future brightened*) or **Forever Foster** or **Foster Forever(F2)** *Love.Heal.Trust.Respect.Cherish* is focused on improving the current foster care matching system which heavily relies on domain expertise and specific requests from foster parents that may hinder the potential of leveraging the insights from all the historic placement information of paired foster parents and children. This matching task could affect **200,000** children in Florida alone and **500,000** in US.  \n  \nUsing merged data sources from Adoption and Foster Care Analysis and Reporting (***AFCARS***) - annual case-level information of each child record in foster care system mandated by federal government; Florida Removal and Placement History (***FRPH***) - granular data of each child placement details with extra information on duration, date of start and end of placement; Demographics of Children including race, gender, date of birth, etc.  \n  \nWe have built a **Foster Care Matching Recommender System** by providing top **5** to **20** top-quality matched providers for each child entering the system using cutting-edge *factorization machines* that incorporates content-based, knowledge-based, collaborative filtering and contextual filtering with our customized match rating and model scoring configuration.  \n  \nTo complement our recommender system, we also created a **Placement Duration Model** and **Outcome Probability Model** that will predict how long the placement will last and what is the probability of a good placement outcome for our MVP to foster care placement specialists.  \n  \nWe intend to launch our application to foster care placement specialists by Aug 3rd.')
+	st.write('Team **CS:FB** (A Child Saved, a Future Brightened) is focused on improving the current foster care matching system which currently relies heavily on the expertise of specific foster placement specialists, without formally leveraging the insights available from historical placement information. With over half a million children in the foster care system today (US), we hope to make a macro impact as well as make a difference in each foster care child’s individual life. \n \n Using merged data sources from the Adoption and Foster Care Analysis and Reporting dataset (AFCARS) - annual case-level information of each child record in the foster care system mandated by the federal government, and the Florida Removal and Placement History dataset (FRPH) - granular data of each child’s placement details with extra information on duration, we’ve built the **Foster Care Matcher**. \n \n **Foster Care Matcher** provides a list of top-quality foster care providers (parents) by utilizing a **Recommender System** powered by cutting-edge factorization machines that incorporates content and knowledge based, collaborative and contextual filtering with a customized match rating and model scoring configuration. \n \n To complement our Recommender System, a **Placement Duration Model** and an **Outcome Probability Model** will predict how long the current placement in question will last and what the probability of a good placement outcome will be. \n \n We intend to launch our application to foster care placement specialists by Aug 3rd.)')
 
 ### JOURNEY PAGE ###
 def cs_journey():
@@ -722,32 +718,85 @@ def cs_architecture():
 
 
 
-def cs_model():
-	st.write(BANNER,unsafe_allow_html=True) 
-	st.write(BANNERsmall,unsafe_allow_html=True) 
+# def cs_model():
+# 	st.write(BANNER,unsafe_allow_html=True) 
+# 	st.write(BANNERsmall,unsafe_allow_html=True) 
 
-	st.session_state['resetter'] = False
-	st.title('Foster Care Matcher')
-	st.header('Features about Foster Care Matcher')
-	st.write('Process on creating this')
-	model2 = XGBRegressor(objective ='reg:tweedie', tree_method = "gpu_hist", max_depth=12, n_estimators=200, predictor='cpu_predictor')
-	model2.load_model("./XGBoost_regressor_2")
-	placements_to_predict = pd.read_csv("./placements_to_predict.csv")
-	st.write(placements_to_predict)
-	new_df = model2.predict(placements_to_predict)
-	st.write(new_df)
+# 	st.session_state['resetter'] = False
+# 	st.title('Foster Care Matcher')
+# 	st.header('Features about Foster Care Matcher')
+# 	st.write('Process on creating this')
+# 	model2 = XGBRegressor(objective ='reg:tweedie', tree_method = "gpu_hist", max_depth=12, n_estimators=200, predictor='cpu_predictor')
+# 	model2.load_model("./XGBoost_regressor_2")
+# 	placements_to_predict = pd.read_csv("./placements_to_predict.csv")
+# 	st.write(placements_to_predict)
+# 	new_df = model2.predict(placements_to_predict)
+# 	st.write(new_df)
 
 def cs_team():
-	st.write(BANNER,unsafe_allow_html=True) 
-	st.write(BANNERsmall,unsafe_allow_html=True) 
+    st.write(BANNER,unsafe_allow_html=True) 
+    st.write(BANNERsmall,unsafe_allow_html=True) 
 
-	st.session_state['resetter'] = False
-	st.title('Foster Care Matcher')
-	st.header('Who worked on Information')
-	st.write('Pictures')
-	st.title("We'd like to thank")
-	st.header('Orgs')
-	st.write('Robert and Roshannon, David and Joyce')	
+    st.session_state['resetter'] = False
+    st.title('Our Team')
+    st.text("")
+    st.text("")
+    picture_jason = Image.open('picture_jason.jpg')
+    picture_james = Image.open('picture_james.jpg')
+    picture_vineetha = Image.open('picture_vineetha.jpg')
+    picture_christina = Image.open('picture_christina.jpg')
+
+
+    col1, col2, col3 = st.beta_columns(3)
+
+    col1.image(picture_jason, width = 300)
+    col1.write('<div style="text-align: center"> <b> Jason Papale </b> </div>', unsafe_allow_html = True)
+    col1.write('<div style="text-align: center"> MIDS Class of 2021 </div>', unsafe_allow_html = True)
+    col1.write('<div style="text-align: center"> <b> University of California, Berkeley </b> </div>', unsafe_allow_html = True)
+    col1.text("")
+    col1.text("")
+    col1.text("")
+    
+
+    col1.image(picture_james, width = 300)
+    col1.write('<div style="text-align: center"> <b> James Gao </b> </div>', unsafe_allow_html = True)
+    col1.write('<div style="text-align: center"> MIDS Class of 2021 </div>', unsafe_allow_html = True)
+    col1.write('<div style="text-align: center"> <b> University of California, Berkeley </b> </div>', unsafe_allow_html = True)
+    col1.text("")
+    col1.text("")
+    col1.text("")
+    col1.text("")
+
+
+    col2.image(picture_christina, width = 300)
+    col2.write('<div style="text-align: center"> <b> Christina Min </b> </div>', unsafe_allow_html = True)
+    col2.write('<div style="text-align: center"> MIDS Class of 2021 </div>', unsafe_allow_html = True)
+    col2.write('<div style="text-align: center"> <b> University of California, Berkeley </b> </div>', unsafe_allow_html = True)
+    col2.text("")
+    col2.text("")
+    col2.text("")
+    
+
+    col2.image(picture_vineetha, width = 300)
+    col2.write('<div style="text-align: center"> <b> Vineetha Nalini </b> </div>', unsafe_allow_html = True)
+    col2.write('<div style="text-align: center"> MIDS Class of 2021 </div>', unsafe_allow_html = True)
+    col2.write('<div style="text-align: center"> <b> University of California, Berkeley </b> </div>', unsafe_allow_html = True)
+    col2.text("")
+    col2.text("")
+    col2.text("")
+    col2.text("")
+
+
+
+    st.title("Acknowledgments")
+    st.write("Thank you for all of your support for this project!")
+    st.text("")
+    st.write('**Joyce Shen** - UC Berkeley School of Information, Lecturer')
+    st.write('**David Steier** - UC Berkeley & Carnegie Mellon University, Professor')
+    st.write('**Robert Latham** - University of Miami Law School, Associate Director')
+    st.write('**Roshannon Jackson** - State of Florida, Leon County, Director of Placements')
+    st.write('**Colorado Reed** - UC Berkeley School of Information, Teaching Assistant and PhD')
+
 
 # Run main()
 

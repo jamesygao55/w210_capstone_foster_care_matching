@@ -48,7 +48,7 @@ WHITECOLORsmall= '<p style="font-family:Courier; color:White; font-size: 11px;">
 BANNER= '<p style="font-family:Helvetica Neue; color:Teal; font-size: 55px; line-height:25px;text-align: center;"><b>Foster Care Matcher</b></p>'
 BANNERsmall= '<p style="font-family:Arial; color:Teal; font-size: 20px;text-align: center;">Love. Heal. Respect. Cherish.</p>'
 BANNERleft= '<p style="font-family:Helvetica Neue; color:Teal; font-size: 55px; line-height:25px;text-align: left;"><b>Foster Care Matcher</b></p>'
-BANNERlectsmall= '<p style="font-family:Arial; color:Teal; font-size: 20px;text-align: left;">Love. Heal. Respect. Cherish</p>'
+BANNERleftsmall= '<p style="font-family:Arial; color:Teal; font-size: 20px;text-align: left;">Love. Heal. Respect. Cherish</p>'
 SIDEBARHEADING= '<p style="font-family:Arial; color:Teal; font-size: 20px;text-align: left;"><b>Foster Care Matcher</b></p>'
 
 @st.cache(allow_output_mutation=True)
@@ -137,7 +137,7 @@ def cs_sidebar():
 
 def cs_body():
     st.write(BANNERleft,unsafe_allow_html=True) 
-    st.write(BANNERlectsmall,unsafe_allow_html=True) 
+    st.write(BANNERleftsmall,unsafe_allow_html=True) 
 
     col1, col2, col3 = st.beta_columns(3)
 
@@ -605,7 +605,8 @@ def cs_journey():
 	with header:
 		
 		# Creating the Titles and Image	
-		st.header("My Journey with Foster Care")
+		st.header("Child's Previous Placement Tracker")
+		st.write("This page will quickly show all the previous placements for the child : the previous foster providers, location, and duration of placements. ")
 		st.subheader("Please select the Child ID")
 
 	with product:	
@@ -620,6 +621,8 @@ def cs_journey():
 		def dataload(df, cid = child_ID):
 			source = df[df.AFCARS_ID==cid]
 			source['zip'] = source['zip'].astype('str')
+			source['END_REASON'] = source['END_REASON'].astype('str')
+			source['REMOVAL_RANK'] = source['REMOVAL_RANK'].astype('int')
 			source['PLACEMENT_BEGIN_DATE'] = source['PLACEMENT_BEGIN_DATE'].apply(lambda x: pd.to_datetime(x, format='%Y-%m-%d'))
 			source['PLACEMENT_END_DATE'] = source['PLACEMENT_END_DATE'].apply(lambda x: pd.to_datetime(x, format='%Y-%m-%d'))
 			source['REMOVAL_DATE'] = source['REMOVAL_DATE'].apply(lambda x: pd.to_datetime(x, format='%Y-%m-%d'))
@@ -632,18 +635,18 @@ def cs_journey():
 			gdf = gdf[gdf.id=='FL']
 			base = alt.Chart(gdf).mark_geoshape(
 			stroke='gray', 
-			fill='lightgrey')	
+			fill='lightgrey')
 
 			points = alt.Chart(source).mark_circle().encode(
 			longitude='longitude:Q',
 			latitude='latitude:Q',
-			color = 'zip:N',
-			size='PLACEMENT_LENGTH',
+			color = alt.value('steelblue'),
+			size=alt.Size('PLACEMENT_LENGTH:Q', title='Placement Length'),
 			# title='placement locaton in Florida',
-			tooltip=['zip', 'PLACEMENT_LENGTH']
-			).properties(title='placement location')
-
-			# g_plot = base + points
+			tooltip=['REMOVAL_RANK:Q','PROVIDER_ID:Q','END_REASON:Q']
+			).properties(title='Placement Location')
+			
+			#g_plot = base + points
 			# st.write(g_plot)
 
 			pl_num_mark = alt.Chart(source).mark_circle().encode(
@@ -651,17 +654,17 @@ def cs_journey():
 			y='PLACEMENT_LENGTH:Q',
 			size='PLACEMENT_LENGTH',
 			color = 'zip',
-			tooltip=['PLACEMENT_NUM', 'PLACEMENT_LENGTH']
-			).properties(title='placement length vs number').interactive()
+			tooltip=['REMOVAL_RANK','PROVIDER_ID','PLACEMENT_NUM', 'PLACEMENT_LENGTH','END_REASON']
+			).properties(title='Placement Length vs Number').interactive()
 			
 			pl_duration_mark = alt.Chart(source).mark_circle().encode(
 			# x='PLACEMENT_NUM:Q',
 			x='PLACEMENT_BEGIN_DATE:T',
 			y= 'PLACEMENT_LENGTH:Q',
 			size='PLACEMENT_LENGTH',
-			tooltip=['PLACEMENT_BEGIN_DATE', 'PLACEMENT_LENGTH']
+			tooltip=['REMOVAL_RANK','PROVIDER_ID','PLACEMENT_BEGIN_DATE', 'PLACEMENT_LENGTH','END_REASON']
 			).properties(
-				title='placement duration').interactive()
+				title='Placement Duration').interactive()
 
 			# plot_group1 = alt.hconcat(pl_duration_mark, pl_num_mark, points)
 			plot_group1 = alt.hconcat(pl_duration_mark, pl_num_mark) 
@@ -675,21 +678,24 @@ def cs_journey():
 		[80000001,451000749,1811000629,8291010319,261405401,81010219,251010479,1010299,31010759])
 
 	
-		# if num_prev_placements == 50:
-		# st.markdown("""this is the journey of a child""")
-		# st.subheader('this is the past journey of this child going through foster care system at least ' +str(num_prev_placements)+ ' times!')
 		source = dataload(df, cid = child_ID)
 		pl_num = source.shape[0]
 		pl_start = source['PLACEMENT_BEGIN_DATE'].min()
 		pl_yrs =str(source['PLACEMENT_END_DATE'].max().year - source['PLACEMENT_BEGIN_DATE'].min().year)
-
-		st.write('this child has experienced ' + str(pl_num) + ' placements within ' + str(pl_yrs) + ' years with mixed experience.')
-		# st.write(source.head(2))
 		
+		st.subheader('Map showing Child\'s previous placement locations')
+		
+		plot_group1 = plot_multi(source)
+				
 		df_map = source[['PLACEMENT_LENGTH','latitude', 'longitude']]
 		st.map(df_map)	
+		
+		st.write('This child has experienced ' + str(pl_num) + ' placements within ' + str(pl_yrs) + ' years with mixed experience.')
+		
+		st.subheader('Graphs for Duration and Placement Order Analysis')
+		st.write(" ")
+		
 
-		plot_group1 = plot_multi(source)
 		st.write(plot_group1)
 
 def cs_architecture():
@@ -698,10 +704,6 @@ def cs_architecture():
 
 	st.session_state['resetter'] = False
 	st.title('Data Pipeline and App Deployment')
-	# st.header('Features about Foster Care Matcher')
-	# st.write('Process on creating this')
-	# set the page layout
-	# st.set_page_config(layout="wide")
 
 	header = st.beta_container()
 	# product = st.beta_container()
@@ -734,8 +736,8 @@ def cs_architecture():
 # 	st.write(new_df)
 
 def cs_team():
-    st.write(BANNER,unsafe_allow_html=True) 
-    st.write(BANNERsmall,unsafe_allow_html=True) 
+    st.write(BANNERleft,unsafe_allow_html=True) 
+    st.write(BANNERleftsmall,unsafe_allow_html=True) 
 
     st.session_state['resetter'] = False
     st.title('Our Team')
@@ -750,18 +752,18 @@ def cs_team():
     col1, col2, col3 = st.beta_columns(3)
 
     col1.image(picture_jason, width = 300)
-    col1.write('<div style="text-align: center"> <b> Jason Papale </b> </div>', unsafe_allow_html = True)
-    col1.write('<div style="text-align: center"> MIDS Class of 2021 </div>', unsafe_allow_html = True)
-    col1.write('<div style="text-align: center"> <b> University of California, Berkeley </b> </div>', unsafe_allow_html = True)
+    col1.write('<div style="text-align: left"> <b> Jason Papale </b> </div>', unsafe_allow_html = True)
+    col1.write('<div style="text-align: left"> MIDS Class of 2021 </div>', unsafe_allow_html = True)
+    col1.write('<div style="text-align: left"> <b> University of California, Berkeley </b> </div>', unsafe_allow_html = True)
     col1.text("")
     col1.text("")
     col1.text("")
     
 
     col1.image(picture_james, width = 300)
-    col1.write('<div style="text-align: center"> <b> James Gao </b> </div>', unsafe_allow_html = True)
-    col1.write('<div style="text-align: center"> MIDS Class of 2021 </div>', unsafe_allow_html = True)
-    col1.write('<div style="text-align: center"> <b> University of California, Berkeley </b> </div>', unsafe_allow_html = True)
+    col1.write('<div style="text-align: left"> <b> James Gao </b> </div>', unsafe_allow_html = True)
+    col1.write('<div style="text-align: left"> MIDS Class of 2021 </div>', unsafe_allow_html = True)
+    col1.write('<div style="text-align: left"> <b> University of California, Berkeley </b> </div>', unsafe_allow_html = True)
     col1.text("")
     col1.text("")
     col1.text("")
@@ -769,18 +771,18 @@ def cs_team():
 
 
     col2.image(picture_christina, width = 300)
-    col2.write('<div style="text-align: center"> <b> Christina Min </b> </div>', unsafe_allow_html = True)
-    col2.write('<div style="text-align: center"> MIDS Class of 2021 </div>', unsafe_allow_html = True)
-    col2.write('<div style="text-align: center"> <b> University of California, Berkeley </b> </div>', unsafe_allow_html = True)
+    col2.write('<div style="text-align: left"> <b> Christina Min </b> </div>', unsafe_allow_html = True)
+    col2.write('<div style="text-align: left"> MIDS Class of 2021 </div>', unsafe_allow_html = True)
+    col2.write('<div style="text-align: left"> <b> University of California, Berkeley </b> </div>', unsafe_allow_html = True)
     col2.text("")
     col2.text("")
     col2.text("")
     
 
     col2.image(picture_vineetha, width = 300)
-    col2.write('<div style="text-align: center"> <b> Vineetha Nalini </b> </div>', unsafe_allow_html = True)
-    col2.write('<div style="text-align: center"> MIDS Class of 2021 </div>', unsafe_allow_html = True)
-    col2.write('<div style="text-align: center"> <b> University of California, Berkeley </b> </div>', unsafe_allow_html = True)
+    col2.write('<div style="text-align: left"> <b> Vineetha Nalini </b> </div>', unsafe_allow_html = True)
+    col2.write('<div style="text-align: left"> MIDS Class of 2021 </div>', unsafe_allow_html = True)
+    col2.write('<div style="text-align: left"> <b> University of California, Berkeley </b> </div>', unsafe_allow_html = True)
     col2.text("")
     col2.text("")
     col2.text("")

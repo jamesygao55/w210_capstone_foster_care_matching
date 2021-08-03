@@ -699,38 +699,25 @@ def cs_architecture():
 	st.session_state['resetter'] = False
 	st.title('From Data Ingestion to App Deployment - E2E Pipiline and Models Specifications')
 
-	header = st.beta_container()
-	product = st.beta_container()
+    st.header('Data Pipeline and App Deployment')
+    image = Image.open('APPGCPdiagram.png').convert('RGB').save('pipeline_mk_new.png')
+    image = Image.open('pipeline_mk_new.png')	
+    st.image(image, width = 1100)
 
-	with header:
-		st.header('Data Pipeline and App Deployment')
+    st.header('Dive Into Our Match Recommender System')
+    image2 = Image.open('Recommender_diagram.png').convert('RGB').save('recommender_new.png')
+    image2 = Image.open('recommender_new.png')
+    st.image(image2, width = 1100)
 
-		image = Image.open('APPGCPdiagram.png').convert('RGB').save('pipeline_mk_new.png')
-		image = Image.open('pipeline_mk_new.png')	
-		st.image(image, width = 1100)
+    st.header('Embeddings with Similarity Analysis')
+    image3 = Image.open('Embeddings_Similarity.png').convert('RGB').save('Embeddings_Similarity_new.png')
+    image3 = Image.open('Embeddings_Similarity_new.png')
+    st.image(image3, width = 1100)
 
-        st.header('Dive Into Our Match Recommender System')
-
-        image2 = Image.open('Recommender_diagram.png').convert('RGB').save('recommender_new.png')
-        image2 = Image.open('recommender_new.png')
-        st.image(image2, width = 1100)
-
-        st.subheader('Embeddings with Similarity Analysis')
-        image3 = Image.open('Embeddings_Similarity.png').convert('RGB').save('Embeddings_Similarity_new.png')
-        image3 = Image.open('Embeddings_Similarity_new.png')
-        st.image(image3, width = 1100)
-
-        st.subheader('Model Transparency - Randowm Forest on Feature Importance Evaluation')
-        image4 = Image.open('RandomForestDecisionTree.png').convert('RGB').save('RandomForestDecisionTree_new.png')
-        image4 = Image.open('RandomForestDecisionTree_new.png')
-        st.image(image4, width = 1100)
-
-		# st.title('Foster Care Matcher')
-		# st.header('Features about Foster Care Matcher')
-		# st.subheader('this is data pipeline and ML pipeline')
-		# st.write('Process on creating this')
-
-
+    st.header('Model Transparency - Randowm Forest on Feature Importance Evaluation')
+    image4 = Image.open('RandomForestDecisionTree.png').convert('RGB').save('RandomForestDecisionTree_new.png')
+    image4 = Image.open('RandomForestDecisionTree_new.png')
+    st.image(image4, width = 1100)
 
 # def cs_model():
 # 	st.write(BANNER,unsafe_allow_html=True) 

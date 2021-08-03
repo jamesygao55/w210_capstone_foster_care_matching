@@ -711,7 +711,7 @@ def cs_architecture():
         st.image(image, width = 1100)
 
     with product2:
-        st.eader('Dive Into Our Match Recommender System')
+        st.header('Dive Into Our Match Recommender System')
         image2 = Image.open('Recommender_diagram.png').convert('RGB').save('recommender_new.png')
         image2 = Image.open('recommender_new.png')
         st.image(image2, width = 1100)

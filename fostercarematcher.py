@@ -700,7 +700,7 @@ def cs_architecture():
     st.title('E2E Pipilines and Models Specifications')
     st.text("")
     product1 = st.beta_container()
-    product2, product3 =  st.beta_columns(1,1.2)
+    product2, product3 =  st.beta_columns(2)
     # product2 = st.beta_container()
     # product3 = st.beta_container()
     # product4 = st.beta_container()

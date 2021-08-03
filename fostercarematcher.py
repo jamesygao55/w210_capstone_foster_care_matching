@@ -715,13 +715,13 @@ def cs_architecture():
         st.header('Dive Into Our Match Recommender System')
         image2 = Image.open('FM_ModelSpecification.png').convert('RGB').save('recommender_new.png')
         image2 = Image.open('recommender_new.png')
-        st.image(image2, width = 1100)
+        st.image(image2, width = 550)
 
     with product3:
         st.header('Embeddings with Similarity Analysis')
         image3 = Image.open('FeatureSelectionRandomForest.png').convert('RGB').save('FeatureSelection_new.png')
         image3 = Image.open('FeatureSelection_new.png')
-        st.image(image3, width = 1100)
+        st.image(image3, width = 550)
 
     # with product4:
     #     st.header('Model Transparency - Randowm Forest on Feature Importance Evaluation')

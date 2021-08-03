@@ -697,20 +697,34 @@ def cs_architecture():
 	st.write(BANNERsmall,unsafe_allow_html=True) 
 
 	st.session_state['resetter'] = False
-	st.title('Data Pipeline and App Deployment')
-	# st.header('Features about Foster Care Matcher')
-	# st.write('Process on creating this')
-	# set the page layout
-	# st.set_page_config(layout="wide")
+	st.title('From Data Ingestion to App Deployment - E2E Pipiline and Models Specifications')
 
 	header = st.beta_container()
-	# product = st.beta_container()
+	product = st.beta_container()
 
 	with header:
-		# st.title('Foster Care Matcher ')
-		# st.header('Features about Foster Care Matcher')
-		image = Image.open('APPGCPdiagram.png')	
+		st.header('Data Pipeline and App Deployment')
+
+		image = Image.open('APPGCPdiagram.png').convert('RGB').save('pipeline_mk_new.png')
+		image = Image.open('pipeline_mk_new.png')	
 		st.image(image, width = 1100)
+
+        st.header('Dive Into Our Match Recommender System')
+
+        image2 = Image.open('Recommender_diagram.png').convert('RGB').save('recommender_new.png')
+        image2 = Image.open('recommender_new.png')
+        st.image(image2, width = 1100)
+
+        st.subheader('Embeddings with Similarity Analysis')
+        image3 = Image.open('Embeddings_Similarity.png').convert('RGB').save('Embeddings_Similarity_new.png')
+        image3 = Image.open('Embeddings_Similarity_new.png')
+        st.image(image3, width = 1100)
+
+        st.subheader('Model Transparency - Randowm Forest on Feature Importance Evaluation')
+        image4 = Image.open('RandomForestDecisionTree.png').convert('RGB').save('RandomForestDecisionTree_new.png')
+        image4 = Image.open('RandomForestDecisionTree_new.png')
+        st.image(image4, width = 1100)
+
 		# st.title('Foster Care Matcher')
 		# st.header('Features about Foster Care Matcher')
 		# st.subheader('this is data pipeline and ML pipeline')

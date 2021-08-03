@@ -697,36 +697,37 @@ def cs_architecture():
     st.write(BANNERsmall,unsafe_allow_html=True) 
 
     st.session_state['resetter'] = False
-    st.title('From Data Ingestion to App Deployment - E2E Pipiline and Models Specifications')
+    st.title('E2E Pipilines and Models Specifications')
     st.text("")
     product1 = st.beta_container()
-    product2 = st.beta_container()
-    product3 = st.beta_container()
-    product4 = st.beta_container()
+    product2, product3 =  st.beta_columns(1,1.2)
+    # product2 = st.beta_container()
+    # product3 = st.beta_container()
+    # product4 = st.beta_container()
 
     with product1:
-        st.header('Data Pipeline and App Deployment')
+        st.header('ML Pipelines and App Deployment')
         image = Image.open('APPGCPdiagram.png').convert('RGB').save('pipeline_mk_new.png')
         image = Image.open('pipeline_mk_new.png')	
         st.image(image, width = 1100)
 
     with product2:
         st.header('Dive Into Our Match Recommender System')
-        image2 = Image.open('Recommender_diagram.png').convert('RGB').save('recommender_new.png')
+        image2 = Image.open('FM_ModelSpecification.png').convert('RGB').save('recommender_new.png')
         image2 = Image.open('recommender_new.png')
         st.image(image2, width = 1100)
 
     with product3:
         st.header('Embeddings with Similarity Analysis')
-        image3 = Image.open('Embeddings_Similarity.png').convert('RGB').save('Embeddings_Similarity_new.png')
-        image3 = Image.open('Embeddings_Similarity_new.png')
+        image3 = Image.open('FeatureSelectionRandomForest.png').convert('RGB').save('FeatureSelection_new.png')
+        image3 = Image.open('FeatureSelection_new.png')
         st.image(image3, width = 1100)
 
-    with product4:
-        st.header('Model Transparency - Randowm Forest on Feature Importance Evaluation')
-        image4 = Image.open('RandomForestDecisionTree.png').convert('RGB').save('RandomForestDecisionTree_new.png')
-        image4 = Image.open('RandomForestDecisionTree_new.png')
-        st.image(image4, width = 1100)
+    # with product4:
+    #     st.header('Model Transparency - Randowm Forest on Feature Importance Evaluation')
+    #     image4 = Image.open('RandomForestDecisionTree.png').convert('RGB').save('RandomForestDecisionTree_new.png')
+    #     image4 = Image.open('RandomForestDecisionTree_new.png')
+    #     st.image(image4, width = 1100)
 
 # def cs_model():
 # 	st.write(BANNER,unsafe_allow_html=True) 

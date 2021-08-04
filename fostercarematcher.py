@@ -589,7 +589,7 @@ def cs_home():
 
 	st.session_state['resetter'] = False
 	image = Image.open('homepage_children.jpeg')
-	st.image(image, width = 1200)
+	st.image(image, width = 1300)
 	
 	st.title('Foster Care Matcher')
 	st.write('Team **CS:FB** (A Child Saved, a Future Brightened) is focused on improving the current foster care matching system which currently relies heavily on the expertise of specific foster placement specialists, without formally leveraging the insights available from historical placement information. With over half a million children in the foster care system today (US), we hope to make a macro impact as well as make a difference in each foster care child’s individual life. \n \n Using merged data sources from the Adoption and Foster Care Analysis and Reporting dataset (AFCARS) - annual case-level information of each child record in the foster care system mandated by the federal government, and the Florida Removal and Placement History dataset (FRPH) - granular data of each child’s placement details with extra information on duration, we’ve built the **Foster Care Matcher**. \n \n **Foster Care Matcher** provides a list of top-quality foster care providers (parents) by utilizing a **Recommender System** powered by cutting-edge factorization machines that incorporates content and knowledge based, collaborative and contextual filtering with a customized match rating and model scoring configuration. \n \n To complement our Recommender System, a **Placement Duration Model** and an **Outcome Probability Model** will predict how long the current placement in question will last and what the probability of a good placement outcome will be. \n \n We intend to launch our application to foster care placement specialists by Aug 3rd.)')

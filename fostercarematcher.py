@@ -592,7 +592,7 @@ def cs_home():
 	st.image(image, width = 1200)
 	
 	st.title('Foster Care Matcher')
-	st.write('Team **CS:FB** (A Child Saved, a Future Brightened) is focused on improving the current foster care matching system which currently relies heavily on the expertise of specific foster placement specialists, without formally leveraging the insights available from historical placement information. With over half a million children in the foster care system today (US), we hope to make a macro impact as well as make a difference in each foster care child’s individual life. \n \n Using merged data sources from the Adoption and Foster Care Analysis and Reporting dataset (AFCARS) - annual case-level information of each child record in the foster care system mandated by the federal government, and the Florida Removal and Placement History dataset (FRPH) - granular data of each child’s placement details with extra information on duration, we’ve built the **Foster Care Matcher**. \n \n **Foster Care Matcher** provides a list of top-quality foster care providers (parents) by utilizing a **Recommender System** powered by cutting-edge factorization machines that incorporates content and knowledge based, collaborative and contextual filtering with a customized match rating and model scoring configuration. \n \n To complement our Recommender System, a **Placement Duration Model** and an **Outcome Probability Model** will predict how long the current placement in question will last and what the probability of a good placement outcome will be. \n \n We intend to launch our application to foster care placement specialists by Aug 3rd.)')
+	st.write('The **foster care system** in the US is currently responsible for the lives and placements of over 500,000 children across the entire country today. Finding a good home for a foster child to stay in, while their biological parents take the time they need to recover from certain issues, can be a very difficult task. Foster parents (foster providers) are not always able to take care of a child and their specific needs. When this happens, a placement is disrupted, either by the foster provider requesting a change, or due to other complications such as the child running away or being admitted to an institution. Children who have to experience more instability like this have a higher chance of suffering from long term effects such as trauma or entering the Justice system. \n \n **Our team is focused on improving the foster child to foster provider matching process.** The system currently relies heavily on the expertise of specific foster placement specialists, without formally leveraging the insights available from historical placement information. Using merged data sources from the Adoption and Foster Care Analysis and Reporting dataset (AFCARS) - __annual case-level information of each child record in the foster care system mandated by the federal government__, and the Florida Removal and Placement History dataset (FRPH) - __granular data of each child’s placement details with extra information on duration__, we’ve built the **Foster Care Matcher**. \n \n **Foster Care Matcher** provides a list of top-quality foster care providers (parents) by utilizing a **Recommender System** powered by factorization machines that incorporates content and knowledge based, collaborative and contextual filtering with a customized match rating and model scoring configuration. To complement our Recommender System, a **Placement Duration Model** and an **Outcome Probability Model** will predict how long the current placement in question will last and what the probability of a good placement outcome will be to further assist a placement specialist in making a decision when trying to place a child.')
 
 ### JOURNEY PAGE ###
 def cs_journey():
@@ -606,7 +606,7 @@ def cs_journey():
 		
 		# Creating the Titles and Image	
 		st.header("Child's Previous Placement Tracker")
-		st.write("This page will quickly show all the previous placements for the child : the previous foster providers, location, and duration of placements. ")
+		st.write("See all the previous placements for a specific Child, their previous foster providers, locations, and duration of placements.")
 		st.subheader("Please select the Child ID")
 
 	with product:	
@@ -699,24 +699,35 @@ def cs_journey():
 		st.write(plot_group1)
 
 def cs_architecture():
-	st.write(BANNER,unsafe_allow_html=True) 
-	st.write(BANNERsmall,unsafe_allow_html=True) 
+    st.write(BANNER,unsafe_allow_html=True) 
+    st.write(BANNERsmall,unsafe_allow_html=True) 
 
-	st.session_state['resetter'] = False
-	st.title('Data Pipeline and App Deployment')
+    st.session_state['resetter'] = False
+    st.title('E2E Pipilines and Models Specifications')
+    st.text("")
+    product1 = st.beta_container()
+    product2, product3 =  st.beta_columns(2)
+    # product2 = st.beta_container()
+    # product3 = st.beta_container()
+    # product4 = st.beta_container()
 
-	header = st.beta_container()
-	# product = st.beta_container()
+    with product1:
+        st.header('ML Pipelines and App Deployment')
+        image = Image.open('APPGCPdiagram.png').convert('RGB').save('pipeline_mk_new.png')
+        image = Image.open('pipeline_mk_new.png')   
+        st.image(image, width = 1100)
 
-	with header:
-		# st.title('Foster Care Matcher ')
-		# st.header('Features about Foster Care Matcher')
-		image = Image.open('APP GCP diagram.png')	
-		st.image(image, width = 1100)
-		# st.title('Foster Care Matcher')
-		# st.header('Features about Foster Care Matcher')
-		# st.subheader('this is data pipeline and ML pipeline')
-		# st.write('Process on creating this')
+    with product2:
+        st.header('Dive Into Our Match Recommender System')
+        image2 = Image.open('FM_ModelSpecification.png').convert('RGB').save('recommender_new.png')
+        image2 = Image.open('recommender_new.png')
+        st.image(image2, width = 550)
+
+    with product3:
+        st.header('Embeddings with Similarity Analysis')
+        image3 = Image.open('FeatureSelectionRandomForest.png').convert('RGB').save('FeatureSelection_new.png')
+        image3 = Image.open('FeatureSelection_new.png')
+        st.image(image3, width = 550)
 
 
 

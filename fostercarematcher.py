@@ -719,7 +719,7 @@ def cs_architecture():
 
     with product3:
         st.header('Embeddings with Similarity Analysis')
-        image3 = Image.open('FeatureSelectionRandomForest.png').convert('RGB').save('FeatureSelection_new.png')
+        image3 = Image.open('FeatureSelectionRandomForest2.png').convert('RGB').save('FeatureSelection_new.png')
         image3 = Image.open('FeatureSelection_new.png')
         st.image(image3, width = 550)
 

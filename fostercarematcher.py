@@ -707,9 +707,7 @@ def cs_architecture():
     st.text("")
     product1 = st.beta_container()
     product2, product3 =  st.beta_columns(2)
-    # product2 = st.beta_container()
-    # product3 = st.beta_container()
-    # product4 = st.beta_container()
+    product4, product5 = st.beta_columns(2)
 
     with product1:
         st.header('ML Pipelines and App Deployment')
@@ -728,6 +726,16 @@ def cs_architecture():
         image3 = Image.open('FeatureSelectionRandomForest.png').convert('RGB').save('FeatureSelection_new.png')
         image3 = Image.open('FeatureSelection_new.png')
         st.image(image3, width = 550)
+
+    with product4:
+        st.header('Placement Duration Model Evaluation')
+        image4 = Image.open('duration_evaluation.png')
+        st.image(image4, width = 550)
+
+    with product5:
+        st.header('Outcome Model Evaluation')
+        image5 = Image.open('outcome_evaluation.png')
+        st.image(image5, width = 550)
 
 
 

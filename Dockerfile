@@ -1,8 +1,8 @@
 #Deploy from GCP
 FROM python:3.8-buster
 
-#Expose port 8080
-EXPOSE 8080
+#Expose port 8051
+EXPOSE 8051
 
 #Copy Requirements.txt file into app directory
 COPY requirements.txt app/requirements.txt
@@ -16,6 +16,6 @@ COPY . /app
 #Change Working Directory to app directory
 WORKDIR /app
 
-#Run the application on port 8080
-ENTRYPOINT ["streamlit", "run", "fostercarematcher.py", "--server.port=8080", "--server.address=0.0.0.0"]
+#Run the application on port 8051
+ENTRYPOINT ["streamlit", "run", "fostercarematcher.py", "--server.port=8051", "--server.address=0.0.0.0"]
 

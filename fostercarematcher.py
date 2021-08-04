@@ -24,7 +24,7 @@ import DurationModel as DurationModel
 
 from altair.vegalite.v4.schema.channels import X
 import altair as alt
-# import geopandas as gpd
+import geopandas as gpd
 from PIL import Image
 
 # Initial page config
@@ -630,12 +630,12 @@ def cs_journey():
 			return source
 			
 		def plot_multi(source):
-			# import geopandas as gpd
-			# gdf = gpd.read_file('https://raw.githubusercontent.com/python-visualization/folium/master/tests/us-states.json', driver='GeoJSON')
-			# gdf = gdf[gdf.id=='FL']
-			# base = alt.Chart(gdf).mark_geoshape(
-			# stroke='gray', 
-			# fill='lightgrey')
+			import geopandas as gpd
+			gdf = gpd.read_file('https://raw.githubusercontent.com/python-visualization/folium/master/tests/us-states.json', driver='GeoJSON')
+			gdf = gdf[gdf.id=='FL']
+			base = alt.Chart(gdf).mark_geoshape(
+			stroke='gray', 
+			fill='lightgrey')
 
 			points = alt.Chart(source).mark_circle().encode(
 			longitude='longitude:Q',
@@ -716,13 +716,13 @@ def cs_architecture():
         st.image(image, width = 1100)
 
     with product2:
-        st.header('Dive Into Our Match Recommender System')
+        st.header('Dive Into Match Recommender System')
         image2 = Image.open('FM_ModelSpecification.png').convert('RGB').save('recommender_new.png')
         image2 = Image.open('recommender_new.png')
         st.image(image2, width = 500)
 
     with product3:
-        st.header('Embeddings with Similarity Analysis')
+        st.header('Feature Selection & Similarity Analysis')
         image3 = Image.open('FeatureSelectionRandomForest.png').convert('RGB').save('FeatureSelection_new.png')
         image3 = Image.open('FeatureSelection_new.png')
         st.image(image3, width = 600)

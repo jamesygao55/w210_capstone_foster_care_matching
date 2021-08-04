@@ -24,7 +24,7 @@ import DurationModel as DurationModel
 
 from altair.vegalite.v4.schema.channels import X
 import altair as alt
-import geopandas as gpd
+# import geopandas as gpd
 from PIL import Image
 
 # Initial page config
@@ -631,11 +631,11 @@ def cs_journey():
 			
 		def plot_multi(source):
 			# import geopandas as gpd
-			gdf = gpd.read_file('https://raw.githubusercontent.com/python-visualization/folium/master/tests/us-states.json', driver='GeoJSON')
-			gdf = gdf[gdf.id=='FL']
-			base = alt.Chart(gdf).mark_geoshape(
-			stroke='gray', 
-			fill='lightgrey')
+			# gdf = gpd.read_file('https://raw.githubusercontent.com/python-visualization/folium/master/tests/us-states.json', driver='GeoJSON')
+			# gdf = gdf[gdf.id=='FL']
+			# base = alt.Chart(gdf).mark_geoshape(
+			# stroke='gray', 
+			# fill='lightgrey')
 
 			points = alt.Chart(source).mark_circle().encode(
 			longitude='longitude:Q',

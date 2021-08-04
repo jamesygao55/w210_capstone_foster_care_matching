@@ -701,9 +701,6 @@ def cs_architecture():
     st.text("")
     product1 = st.beta_container()
     product2, product3 =  st.beta_columns(2)
-    # product2 = st.beta_container()
-    # product3 = st.beta_container()
-    # product4 = st.beta_container()
 
     with product1:
         st.header('ML Pipelines and App Deployment')
@@ -712,13 +709,13 @@ def cs_architecture():
         st.image(image, width = 1100)
 
     with product2:
-        st.header('Dive Into Our Match Recommender System')
+        st.header('Dive Into Match Recommender System')
         image2 = Image.open('FM_ModelSpecification.png').convert('RGB').save('recommender_new.png')
         image2 = Image.open('recommender_new.png')
         st.image(image2, width = 500)
 
     with product3:
-        st.header('Embeddings with Similarity Analysis')
+        st.header('Similarity Analysis and Feature Selection')
         image3 = Image.open('FeatureSelectionRandomForest.png').convert('RGB').save('FeatureSelection_new.png')
         image3 = Image.open('FeatureSelection_new.png')
         st.image(image3, width = 600)

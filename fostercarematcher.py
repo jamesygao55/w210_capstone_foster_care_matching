@@ -24,7 +24,7 @@ import DurationModel as DurationModel
 
 from altair.vegalite.v4.schema.channels import X
 import altair as alt
-# import geopandas as gpd
+import geopandas as gpd
 from PIL import Image
 
 # Initial page config
@@ -48,7 +48,7 @@ WHITECOLORsmall= '<p style="font-family:Courier; color:White; font-size: 11px;">
 BANNER= '<p style="font-family:Helvetica Neue; color:Teal; font-size: 55px; line-height:25px;text-align: center;"><b>Foster Care Matcher</b></p>'
 BANNERsmall= '<p style="font-family:Arial; color:Teal; font-size: 20px;text-align: center;">Love. Heal. Respect. Cherish.</p>'
 BANNERleft= '<p style="font-family:Helvetica Neue; color:Teal; font-size: 55px; line-height:25px;text-align: left;"><b>Foster Care Matcher</b></p>'
-BANNERlectsmall= '<p style="font-family:Arial; color:Teal; font-size: 20px;text-align: left;">Love. Heal. Respect. Cherish</p>'
+BANNERleftsmall= '<p style="font-family:Arial; color:Teal; font-size: 20px;text-align: left;">Love. Heal. Respect. Cherish</p>'
 SIDEBARHEADING= '<p style="font-family:Arial; color:Teal; font-size: 20px;text-align: left;"><b>Foster Care Matcher</b></p>'
 
 @st.cache(allow_output_mutation=True)
@@ -137,7 +137,7 @@ def cs_sidebar():
 
 def cs_body():
     st.write(BANNERleft,unsafe_allow_html=True) 
-    st.write(BANNERlectsmall,unsafe_allow_html=True) 
+    st.write(BANNERleftsmall,unsafe_allow_html=True) 
 
     col1, col2, col3 = st.beta_columns(3)
 
@@ -592,7 +592,7 @@ def cs_home():
 	st.image(image, width = 1300)
 	
 	st.title('Foster Care Matcher')
-	st.write('Team **CS:FB** (A Child Saved, a Future Brightened) is focused on improving the current foster care matching system which currently relies heavily on the expertise of specific foster placement specialists, without formally leveraging the insights available from historical placement information. With over half a million children in the foster care system today (US), we hope to make a macro impact as well as make a difference in each foster care child’s individual life. \n \n Using merged data sources from the Adoption and Foster Care Analysis and Reporting dataset (AFCARS) - annual case-level information of each child record in the foster care system mandated by the federal government, and the Florida Removal and Placement History dataset (FRPH) - granular data of each child’s placement details with extra information on duration, we’ve built the **Foster Care Matcher**. \n \n **Foster Care Matcher** provides a list of top-quality foster care providers (parents) by utilizing a **Recommender System** powered by cutting-edge factorization machines that incorporates content and knowledge based, collaborative and contextual filtering with a customized match rating and model scoring configuration. \n \n To complement our Recommender System, a **Placement Duration Model** and an **Outcome Probability Model** will predict how long the current placement in question will last and what the probability of a good placement outcome will be. \n \n We intend to launch our application to foster care placement specialists by Aug 3rd.)')
+	st.write('The **foster care system** in the US is currently responsible for the lives and placements of over 500,000 children across the entire country today. Finding a good home for a foster child to stay in, while their biological parents take the time they need to recover from certain issues, can be a very difficult task. Foster parents (foster providers) are not always able to take care of a child and their specific needs. When this happens, a placement is disrupted, either by the foster provider requesting a change, or due to other complications such as the child running away or being admitted to an institution. Children who have to experience more instability like this have a higher chance of suffering from long term effects such as trauma or entering the Justice system. \n \n **Our team is focused on improving the foster child to foster provider matching process.** The system currently relies heavily on the expertise of specific foster placement specialists, without formally leveraging the insights available from historical placement information. Using merged data sources from the Adoption and Foster Care Analysis and Reporting dataset (AFCARS) - __annual case-level information of each child record in the foster care system mandated by the federal government__, and the Florida Removal and Placement History dataset (FRPH) - __granular data of each child’s placement details with extra information on duration__, we’ve built the **Foster Care Matcher**. \n \n **Foster Care Matcher** provides a list of top-quality foster care providers (parents) by utilizing a **Recommender System** powered by factorization machines that incorporates content and knowledge based, collaborative and contextual filtering with a customized match rating and model scoring configuration. To complement our Recommender System, a **Placement Duration Model** and an **Outcome Probability Model** will predict how long the current placement in question will last and what the probability of a good placement outcome will be to further assist a placement specialist in making a decision when trying to place a child.')
 
 ### JOURNEY PAGE ###
 def cs_journey():
@@ -605,7 +605,8 @@ def cs_journey():
 	with header:
 		
 		# Creating the Titles and Image	
-		st.header("My Journey with Foster Care")
+		st.header("Child's Previous Placement Tracker")
+		st.write("See all the previous placements for a specific Child, their previous foster providers, locations, and duration of placements.")
 		st.subheader("Please select the Child ID")
 
 	with product:	
@@ -620,6 +621,8 @@ def cs_journey():
 		def dataload(df, cid = child_ID):
 			source = df[df.AFCARS_ID==cid]
 			source['zip'] = source['zip'].astype('str')
+			source['END_REASON'] = source['END_REASON'].astype('str')
+			source['REMOVAL_RANK'] = source['REMOVAL_RANK'].astype('int')
 			source['PLACEMENT_BEGIN_DATE'] = source['PLACEMENT_BEGIN_DATE'].apply(lambda x: pd.to_datetime(x, format='%Y-%m-%d'))
 			source['PLACEMENT_END_DATE'] = source['PLACEMENT_END_DATE'].apply(lambda x: pd.to_datetime(x, format='%Y-%m-%d'))
 			source['REMOVAL_DATE'] = source['REMOVAL_DATE'].apply(lambda x: pd.to_datetime(x, format='%Y-%m-%d'))
@@ -628,22 +631,22 @@ def cs_journey():
 			
 		def plot_multi(source):
 			# import geopandas as gpd
-			# gdf = gpd.read_file('https://raw.githubusercontent.com/python-visualization/folium/master/tests/us-states.json', driver='GeoJSON')
-			# gdf = gdf[gdf.id=='FL']
-			# base = alt.Chart(gdf).mark_geoshape(
-			# stroke='gray', 
-			# fill='lightgrey')	
+			gdf = gpd.read_file('https://raw.githubusercontent.com/python-visualization/folium/master/tests/us-states.json', driver='GeoJSON')
+			gdf = gdf[gdf.id=='FL']
+			base = alt.Chart(gdf).mark_geoshape(
+			stroke='gray', 
+			fill='lightgrey')
 
 			points = alt.Chart(source).mark_circle().encode(
 			longitude='longitude:Q',
 			latitude='latitude:Q',
-			color = 'zip:N',
-			size='PLACEMENT_LENGTH',
+			color = alt.value('steelblue'),
+			size=alt.Size('PLACEMENT_LENGTH:Q', title='Placement Length'),
 			# title='placement locaton in Florida',
-			tooltip=['zip', 'PLACEMENT_LENGTH']
-			).properties(title='placement location')
-
-			# g_plot = base + points
+			tooltip=['REMOVAL_RANK:Q','PROVIDER_ID:Q','END_REASON:Q']
+			).properties(title='Placement Location')
+			
+			#g_plot = base + points
 			# st.write(g_plot)
 
 			pl_num_mark = alt.Chart(source).mark_circle().encode(
@@ -651,17 +654,17 @@ def cs_journey():
 			y='PLACEMENT_LENGTH:Q',
 			size='PLACEMENT_LENGTH',
 			color = 'zip',
-			tooltip=['PLACEMENT_NUM', 'PLACEMENT_LENGTH']
-			).properties(title='placement length vs number').interactive()
+			tooltip=['REMOVAL_RANK','PROVIDER_ID','PLACEMENT_NUM', 'PLACEMENT_LENGTH','END_REASON']
+			).properties(title='Placement Length vs Number').interactive()
 			
 			pl_duration_mark = alt.Chart(source).mark_circle().encode(
 			# x='PLACEMENT_NUM:Q',
 			x='PLACEMENT_BEGIN_DATE:T',
 			y= 'PLACEMENT_LENGTH:Q',
 			size='PLACEMENT_LENGTH',
-			tooltip=['PLACEMENT_BEGIN_DATE', 'PLACEMENT_LENGTH']
+			tooltip=['REMOVAL_RANK','PROVIDER_ID','PLACEMENT_BEGIN_DATE', 'PLACEMENT_LENGTH','END_REASON']
 			).properties(
-				title='placement duration').interactive()
+				title='Placement Duration').interactive()
 
 			# plot_group1 = alt.hconcat(pl_duration_mark, pl_num_mark, points)
 			plot_group1 = alt.hconcat(pl_duration_mark, pl_num_mark) 
@@ -675,21 +678,24 @@ def cs_journey():
 		[80000001,451000749,1811000629,8291010319,261405401,81010219,251010479,1010299,31010759])
 
 	
-		# if num_prev_placements == 50:
-		# st.markdown("""this is the journey of a child""")
-		# st.subheader('this is the past journey of this child going through foster care system at least ' +str(num_prev_placements)+ ' times!')
 		source = dataload(df, cid = child_ID)
 		pl_num = source.shape[0]
 		pl_start = source['PLACEMENT_BEGIN_DATE'].min()
 		pl_yrs =str(source['PLACEMENT_END_DATE'].max().year - source['PLACEMENT_BEGIN_DATE'].min().year)
-
-		st.write('this child has experienced ' + str(pl_num) + ' placements within ' + str(pl_yrs) + ' years with mixed experience.')
-		# st.write(source.head(2))
 		
+		st.subheader('Map showing Child\'s previous placement locations')
+		
+		plot_group1 = plot_multi(source)
+				
 		df_map = source[['PLACEMENT_LENGTH','latitude', 'longitude']]
 		st.map(df_map)	
+		
+		st.write('This child has experienced ' + str(pl_num) + ' placements within ' + str(pl_yrs) + ' years with mixed experience.')
+		
+		st.subheader('Graphs for Duration and Placement Order Analysis')
+		st.write(" ")
+		
 
-		plot_group1 = plot_multi(source)
 		st.write(plot_group1)
 
 def cs_architecture():
@@ -701,30 +707,37 @@ def cs_architecture():
     st.text("")
     product1 = st.beta_container()
     product2, product3 =  st.beta_columns(2)
+    product4, product5 = st.beta_columns(2)
 
     with product1:
         st.header('ML Pipelines and App Deployment')
         image = Image.open('APPGCPdiagram.png').convert('RGB').save('pipeline_mk_new.png')
-        image = Image.open('pipeline_mk_new.png')	
+        image = Image.open('pipeline_mk_new.png')   
         st.image(image, width = 1100)
 
     with product2:
-        st.header('Dive Into Match Recommender System')
+        st.header('Dive Into Our Match Recommender System')
         image2 = Image.open('FM_ModelSpecification.png').convert('RGB').save('recommender_new.png')
         image2 = Image.open('recommender_new.png')
         st.image(image2, width = 500)
 
     with product3:
-        st.header('Similarity Analysis and Feature Selection')
+        st.header('Embeddings with Similarity Analysis')
         image3 = Image.open('FeatureSelectionRandomForest.png').convert('RGB').save('FeatureSelection_new.png')
         image3 = Image.open('FeatureSelection_new.png')
         st.image(image3, width = 600)
 
-    # with product4:
-    #     st.header('Model Transparency - Randowm Forest on Feature Importance Evaluation')
-    #     image4 = Image.open('RandomForestDecisionTree.png').convert('RGB').save('RandomForestDecisionTree_new.png')
-    #     image4 = Image.open('RandomForestDecisionTree_new.png')
-    #     st.image(image4, width = 1100)
+    with product4:
+        st.header('Placement Duration Model Evaluation')
+        image4 = Image.open('duration_evaluation.png')
+        st.image(image4, width = 550)
+
+    with product5:
+        st.header('Outcome Model Evaluation')
+        image5 = Image.open('outcome_evaluation.png')
+        st.image(image5, width = 550)
+
+
 
 # def cs_model():
 # 	st.write(BANNER,unsafe_allow_html=True) 
@@ -742,8 +755,8 @@ def cs_architecture():
 # 	st.write(new_df)
 
 def cs_team():
-    st.write(BANNER,unsafe_allow_html=True) 
-    st.write(BANNERsmall,unsafe_allow_html=True) 
+    st.write(BANNERleft,unsafe_allow_html=True) 
+    st.write(BANNERleftsmall,unsafe_allow_html=True) 
 
     st.session_state['resetter'] = False
     st.title('Our Team')
@@ -758,18 +771,18 @@ def cs_team():
     col1, col2, col3 = st.beta_columns(3)
 
     col1.image(picture_jason, width = 300)
-    col1.write('<div style="text-align: center"> <b> Jason Papale </b> </div>', unsafe_allow_html = True)
-    col1.write('<div style="text-align: center"> MIDS Class of 2021 </div>', unsafe_allow_html = True)
-    col1.write('<div style="text-align: center"> <b> University of California, Berkeley </b> </div>', unsafe_allow_html = True)
+    col1.write('<div style="text-align: left"> <b> Jason Papale </b> </div>', unsafe_allow_html = True)
+    col1.write('<div style="text-align: left"> MIDS Class of 2021 </div>', unsafe_allow_html = True)
+    col1.write('<div style="text-align: left"> <b> University of California, Berkeley </b> </div>', unsafe_allow_html = True)
     col1.text("")
     col1.text("")
     col1.text("")
     
 
     col1.image(picture_james, width = 300)
-    col1.write('<div style="text-align: center"> <b> James Gao </b> </div>', unsafe_allow_html = True)
-    col1.write('<div style="text-align: center"> MIDS Class of 2021 </div>', unsafe_allow_html = True)
-    col1.write('<div style="text-align: center"> <b> University of California, Berkeley </b> </div>', unsafe_allow_html = True)
+    col1.write('<div style="text-align: left"> <b> James Gao </b> </div>', unsafe_allow_html = True)
+    col1.write('<div style="text-align: left"> MIDS Class of 2021 </div>', unsafe_allow_html = True)
+    col1.write('<div style="text-align: left"> <b> University of California, Berkeley </b> </div>', unsafe_allow_html = True)
     col1.text("")
     col1.text("")
     col1.text("")
@@ -777,18 +790,18 @@ def cs_team():
 
 
     col2.image(picture_christina, width = 300)
-    col2.write('<div style="text-align: center"> <b> Christina Min </b> </div>', unsafe_allow_html = True)
-    col2.write('<div style="text-align: center"> MIDS Class of 2021 </div>', unsafe_allow_html = True)
-    col2.write('<div style="text-align: center"> <b> University of California, Berkeley </b> </div>', unsafe_allow_html = True)
+    col2.write('<div style="text-align: left"> <b> Christina Min </b> </div>', unsafe_allow_html = True)
+    col2.write('<div style="text-align: left"> MIDS Class of 2021 </div>', unsafe_allow_html = True)
+    col2.write('<div style="text-align: left"> <b> University of California, Berkeley </b> </div>', unsafe_allow_html = True)
     col2.text("")
     col2.text("")
     col2.text("")
     
 
     col2.image(picture_vineetha, width = 300)
-    col2.write('<div style="text-align: center"> <b> Vineetha Nalini </b> </div>', unsafe_allow_html = True)
-    col2.write('<div style="text-align: center"> MIDS Class of 2021 </div>', unsafe_allow_html = True)
-    col2.write('<div style="text-align: center"> <b> University of California, Berkeley </b> </div>', unsafe_allow_html = True)
+    col2.write('<div style="text-align: left"> <b> Vineetha Nalini </b> </div>', unsafe_allow_html = True)
+    col2.write('<div style="text-align: left"> MIDS Class of 2021 </div>', unsafe_allow_html = True)
+    col2.write('<div style="text-align: left"> <b> University of California, Berkeley </b> </div>', unsafe_allow_html = True)
     col2.text("")
     col2.text("")
     col2.text("")

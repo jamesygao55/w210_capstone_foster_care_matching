@@ -172,7 +172,7 @@ def cs_body():
     child_gender = col2.selectbox("Child's gender", ['Select one', 'Male', 'Female'], on_change = set_session_resetter)
     child_race = col1.selectbox("Child's Race", ['Select one', 'White', 'Black', 'Asian', 'Pacific Islander', 'Native American', 'Multi-Racial'], on_change = set_session_resetter)
     child_hispanic = col2.selectbox("Is the child Hispanic?", ['Select one', 'Yes', 'No'],on_change = set_session_resetter)
-    child_caretakerage = col1.number_input("Primary caretaker's age at the time of child's removal", min_value = 0, max_value = 100, step = 1,on_change = set_session_resetter)
+    child_caretakerage = col1.number_input("Primary caretaker's age at the time of child's removal", min_value = 13, max_value = 100, step = 1,on_change = set_session_resetter)
     child_ctkfamst = col2.selectbox("What kind of caretaker was the child removed from?", ['Select one', 'Married Couple', 'Unmarried Couple', 'Single Female', 'Single Male'],on_change = set_session_resetter)
 
 
@@ -183,7 +183,7 @@ def cs_body():
         placed_before = col1.selectbox("Has this child been placed before?", ['Select one', 'Yes', 'No'], on_change = set_session_resetter)
 
         if placed_before == 'Yes':
-             num_prev_placements = col2.number_input('How many previous placements has this child had?', min_value = 0, max_value = 100, step = 1, on_change = set_session_resetter)
+             num_prev_placements = col2.number_input('How many previous placements has this child had?', min_value = 1, max_value = 100, step = 1, on_change = set_session_resetter)
         else:
             col2.subheader(" ")
             col2.text("")
@@ -193,7 +193,7 @@ def cs_body():
  
         if num_prev_placements > 0:
             child_num_prev_placements_good = col1.number_input('Previous placements with POSITIVE outcome', min_value = 0, max_value = num_prev_placements, step = 1,on_change = set_session_resetter)
-            child_num_prev_placements_bad = col2.number_input('Previous placements with NEGATIVE outcome', min_value = 0, max_value = num_prev_placements, step = 1,on_change = set_session_resetter)
+            child_num_prev_placements_bad = col2.number_input('Previous placements with NEGATIVE outcome', min_value = 0, max_value = num_prev_placements - child_num_prev_placements_good, step = 1,on_change = set_session_resetter)
 
             child_date_of_first_placement = col1.date_input("First Placement Start Date", datetime.date(2015,1,1), min_value = (datetime.datetime.now() - datetime.timedelta(days = 6570)), max_value = datetime.datetime.now(),on_change = set_session_resetter)
             child_recent_placement_outcome = col2.selectbox("What was the outcome of the child's most recent placement?", ['Select one', 'Positive', 'Neutral', 'Negative'],on_change = set_session_resetter)

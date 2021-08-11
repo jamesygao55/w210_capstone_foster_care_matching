@@ -107,7 +107,7 @@ def get_lookups(templatechilddf, agelookupdf, racelookupdf, disabilitylookupdf, 
 
 #2. get recommendations
 @st.cache
-def get_recommendations(modelinfer, device, providers, provider_biases, provider_embeddings, childid = 0,raceid = 167737, ageid = 167734, disability = 167743, placement = 167746, gender = 167748, topN = 20):
+def get_recommendations(modelinfer, device, providers, provider_biases, provider_embeddings, short_term = 0, childid = 0,raceid = 167737, ageid = 167734, disability = 167743, placement = 167746, gender = 167748, topN = 20):
     child_embedding = modelinfer.embeddings(torch.tensor(childid,device=device))
     race_embedding = modelinfer.embeddings(torch.tensor(raceid,device=device)) 
     age_embedding = modelinfer.embeddings(torch.tensor(ageid,device=device))
@@ -116,8 +116,13 @@ def get_recommendations(modelinfer, device, providers, provider_biases, provider
     gender_embedding = modelinfer.embeddings(torch.tensor(gender,device=device))
     metadata_embedding = child_embedding+ race_embedding+age_embedding+disability_embedding+placement_embedding+gender_embedding
     rankings = provider_biases.squeeze()+(metadata_embedding*provider_embeddings).sum(1)
-    pdetailed = pd.DataFrame([i for i in providers.iloc[rankings.argsort(descending=True).cpu()][['PROVIDER_INDEX','PROVIDER_ID','provider_name_confidential','MAX_SETTING','FLAGS']].values][:topN], columns = ['PROVIDER_INDEX','PROVIDER_ID','provider_name_confidential','MAX_SETTING','FLAGS'])
-    plist = [i for i in providers.iloc[rankings.argsort(descending=True).cpu()]['PROVIDER_INDEX'].values][:topN]
+#    pdetailed = pd.DataFrame([i for i in providers.iloc[rankings.argsort(descending=True).cpu()][['PROVIDER_INDEX','PROVIDER_ID','provider_name_confidential','MAX_SETTING','FLAGS']].values][:topN], columns = ['PROVIDER_INDEX','PROVIDER_ID','provider_name_confidential','MAX_SETTING','FLAGS'])
+
+#    plist = [i for i in providers.iloc[rankings.argsort(descending=True).cpu()]['PROVIDER_INDEX'].values][:topN]
+    if (short_term == 1):
+        plist = [i for i in providers.iloc[rankings.argsort(descending=True).cpu()][providers.FLAGS.str.contains('Night')]['PROVIDER_INDEX'].values][:topN]
+    else:
+        plist = [i for i in providers.iloc[rankings.argsort(descending=True).cpu()]['PROVIDER_INDEX'].values][:topN]
 
     feature_values = []
     for i in range(topN):
@@ -126,7 +131,7 @@ def get_recommendations(modelinfer, device, providers, provider_biases, provider
     pdata = construct_dataloader(feature_values,topN)
     y_pred = predict(device,pdata,modelinfer)
     px = pd.DataFrame(y_pred.cpu().numpy(), columns = ['CHILD_INDEX','PROVIDER_INDEX','AGE_PLACED_INDEX','RACE_GROUP_INDEX','DISABILITY_GROUP_INDEX','PLACEMENT_NUMBER_INDEX', 'GENDER_INDEX','RATING'])
-    return(pd.merge(pdetailed, px, on = ['PROVIDER_INDEX'])[['PROVIDER_ID','provider_name_confidential','MAX_SETTING','FLAGS','RATING']].sort_values(by=['RATING'],ascending=False))         
+    return(pd.merge(providers, px, on = ['PROVIDER_INDEX'])[['PROVIDER_ID','provider_name_confidential','MAX_SETTING','FLAGS','RATING']].sort_values(by=['RATING'],ascending=False))
 
 
 #load datasets

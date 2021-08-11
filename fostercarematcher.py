@@ -227,7 +227,7 @@ def cs_body():
             child_vishear_flag = col2.checkbox("Visually or Hearing Impaired",on_change = set_session_resetter)
             col1.text("")
             col1.text("")
-            child_mr_flag = col2.checkbox("Mental Retardation",on_change = set_session_resetter)
+            child_mr_flag = col2.checkbox("Intellectually Disabled",on_change = set_session_resetter)
             child_emotdist_flag = col2.checkbox("Emotionally Disturbed",on_change = set_session_resetter)
             child_othermed_flag = col2.checkbox("Other Medically Diagnosed Condition",on_change = set_session_resetter)
             col2.text("")
@@ -606,7 +606,7 @@ def cs_journey():
 		
 		# Creating the Titles and Image	
 		st.header("Child's Previous Placement Tracker")
-		st.write("See all the previous placements for a specific Child, their previous foster providers, locations, and duration of placements.")
+		st.write("See all the previous placements for a specific Child, their previous foster providers, locations, and duration of placements. This is to assist the placement specialist choose (or not choose) specific providers for this child's future placements, based on prior results.")
 		st.subheader("Please select the Child ID")
 
 	with product:	

@@ -227,7 +227,7 @@ def cs_body():
             child_vishear_flag = col2.checkbox("Visually or Hearing Impaired",on_change = set_session_resetter)
             col1.text("")
             col1.text("")
-            child_mr_flag = col2.checkbox("Mental Retardation",on_change = set_session_resetter)
+            child_mr_flag = col2.checkbox("Intellectually Disabled",on_change = set_session_resetter)
             child_emotdist_flag = col2.checkbox("Emotionally Disturbed",on_change = set_session_resetter)
             child_othermed_flag = col2.checkbox("Other Medically Diagnosed Condition",on_change = set_session_resetter)
             col2.text("")
@@ -589,7 +589,7 @@ def cs_home():
 
 	st.session_state['resetter'] = False
 	image = Image.open('homepage_children.jpeg')
-	st.image(image, width = 1300)
+	st.image(image, width = 1200)
 	
 	st.title('Foster Care Matcher')
 	st.write('The **foster care system** in the US is currently responsible for the lives and placements of over 500,000 children across the entire country today. Finding a good home for a foster child to stay in, while their biological parents take the time they need to recover from certain issues, can be a very difficult task. Foster parents (foster providers) are not always able to take care of a child and their specific needs. When this happens, a placement is disrupted, either by the foster provider requesting a change, or due to other complications such as the child running away or being admitted to an institution. Children who have to experience more instability like this have a higher chance of suffering from long term effects such as trauma or entering the Justice system. \n \n **Our team is focused on improving the foster child to foster provider matching process.** The system currently relies heavily on the expertise of specific foster placement specialists, without formally leveraging the insights available from historical placement information. Using merged data sources from the Adoption and Foster Care Analysis and Reporting dataset (AFCARS) - __annual case-level information of each child record in the foster care system mandated by the federal government__, and the Florida Removal and Placement History dataset (FRPH) - __granular data of each child’s placement details with extra information on duration__, we’ve built the **Foster Care Matcher**. \n \n **Foster Care Matcher** provides a list of top-quality foster care providers (parents) by utilizing a **Recommender System** powered by factorization machines that incorporates content and knowledge based, collaborative and contextual filtering with a customized match rating and model scoring configuration. To complement our Recommender System, a **Placement Duration Model** and an **Outcome Probability Model** will predict how long the current placement in question will last and what the probability of a good placement outcome will be to further assist a placement specialist in making a decision when trying to place a child.')
@@ -606,7 +606,7 @@ def cs_journey():
 		
 		# Creating the Titles and Image	
 		st.header("Child's Previous Placement Tracker")
-		st.write("See all the previous placements for a specific Child, their previous foster providers, locations, and duration of placements.")
+		st.write("See all the previous placements for a specific Child, their previous foster providers, locations, and duration of placements. This is to assist the placement specialist choose (or not choose) specific providers for this child's future placements, based on prior results.")
 		st.subheader("Please select the Child ID")
 
 	with product:	
@@ -630,7 +630,7 @@ def cs_journey():
 			return source
 			
 		def plot_multi(source):
-			import geopandas as gpd
+			# import geopandas as gpd
 			gdf = gpd.read_file('https://raw.githubusercontent.com/python-visualization/folium/master/tests/us-states.json', driver='GeoJSON')
 			gdf = gdf[gdf.id=='FL']
 			base = alt.Chart(gdf).mark_geoshape(
@@ -716,13 +716,13 @@ def cs_architecture():
         st.image(image, width = 1100)
 
     with product2:
-        st.header('Dive Into Match Recommender System')
+        st.header('Dive Into Our Match Recommender System')
         image2 = Image.open('FM_ModelSpecification.png').convert('RGB').save('recommender_new.png')
         image2 = Image.open('recommender_new.png')
         st.image(image2, width = 500)
 
     with product3:
-        st.header('Feature Selection & Similarity Analysis')
+        st.header('Similarity Analysis and Feature Selection')
         image3 = Image.open('FeatureSelectionRandomForest.png').convert('RGB').save('FeatureSelection_new.png')
         image3 = Image.open('FeatureSelection_new.png')
         st.image(image3, width = 600)

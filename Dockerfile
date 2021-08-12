@@ -1,4 +1,4 @@
-#Deploy from GCP
+#Deploy from GCP _ Aug 1, 2021
 FROM python:3.8-buster
 
 #Expose port 8080
@@ -17,5 +17,6 @@ COPY . /app
 WORKDIR /app
 
 #Run the application on port 8080
-ENTRYPOINT ["streamlit", "run", "fostercarematcher.py", "--server.port=8080", "--server.address=0.0.0.0"]
+CMD streamlit run --server.port 8080 --server.enableCORS false fostercarematcher.py
+
 
